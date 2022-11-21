@@ -1,0 +1,41 @@
+//- TODO update based on: https://www.matuzo.at/blog/html-boilerplate/
+include mixins
+
+block head
+  //- TODO this allows our syncTreeHook to work for some reason
+  script
+
+
+  meta( key = "charset" charset = "utf-8" )
+  meta(
+    key = "viewport"
+    name = "viewport"
+    content = "width=device-width, initial-scale=1.0"
+  )
+  link( key = "icon" rel = "shortcut icon" href = "/media/images/favicon.ico" )
+  +title( title )
+
+  meta(
+    key = "og:site-name"
+    property = "og:site_name"
+    content = title
+  )
+
+  block description
+    +description( schema.description.value )
+
+  block url
+    +url( url )
+
+  block image
+    +image( image )
+
+  script(
+    src = "https://kit.fontawesome.com/2a37c5fc17.js"
+    crossorigin = "anonymous"
+    data-auto-add-css="false"
+  )
+
+  link( data-key = "css" rel = "stylesheet" href = "https://media.dashkite.io/css/api-documentation-generator/css.css" )
+  
+  link( rel="stylesheet" href="https://use.typekit.net/xsi8fpm.css" )

@@ -1,0 +1,25 @@
+doctype html
+
+html
+  head
+    - var title = schema.title ? `${schema.title.value} — Schema Reference` : "Untitled Schema Reference"
+    include templates/head
+
+  body
+    
+    main
+      .block( class = "nav widest center" )
+        nav(style="flex-wrap: wrap;") 
+          header 
+            h2 Root Schema   
+          a(href="#top-level")=schema.title.value ? schema.title.value : "Untitled"
+      .block( class = "nav widest center" )
+        nav(style="flex-wrap: wrap;") 
+          header 
+            h2 Subschemas   
+          for ref, key in refs 
+            a(href=`#${key}`)=ref.value.title.value ? ref.value.title.value : "Untitled"
+      +resolve({ iterable: schema, id: "top-level" })
+      for ref, key in refs
+        +resolve({ iterable: ref.value, id: key })
+                      

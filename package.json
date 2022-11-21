@@ -1,0 +1,29 @@
+{
+  "name": "@dashkite/schema-documentation-generator",
+  "version": "0.0.0",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dashkite/dashkite/schema-documentation-generator.git"
+  },
+  "license": "SEE LICENSE IN LICENSE.md",
+  "bugs": {
+    "url": "https://github.com/dashkite/dashkite/schema-documentation-generator/issues"
+  },
+  "homepage": "https://github.com/dashkite/dashkite/schema-documentation-generator#readme",
+  "imports": {
+    "#templates/*": "./build/browser/src/templates/*.js"
+  },
+  "devDependencies": {
+    "@dashkite/amen": "^0.1.2",
+    "@dashkite/amen-console": "file:../amen-console",
+    "@dashkite/assert": "^0.1.4",
+    "@dashkite/genie": "^0.5.6",
+    "@dashkite/genie-presets": "file:../genie-presets",
+    "@dashkite/sky-presets": "file:../sky-presets"
+  },
+  "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^9.0.9",
+    "@dashkite/joy": "^0.3.16"
+  }
+}

@@ -2,10 +2,6 @@
 include mixins
 
 block head
-  //- TODO this allows our syncTreeHook to work for some reason
-  script
-
-
   meta( key = "charset" charset = "utf-8" )
   meta(
     key = "viewport"
@@ -36,6 +32,9 @@ block head
     data-auto-add-css="false"
   )
 
-  link( data-key = "css" rel = "stylesheet" href = "https://media.dashkite.io/css/api-documentation-generator/css.css" )
-  
+  link( rel = "preload" as="style" href = "https://workspaces.dashkite.com/css/css.css" )
+  link( key = "css" rel = "stylesheet" href = "https://workspaces.dashkite.com/css/css.css" )
+  link( rel = "preload" as="style" href = "https://media.dashkite.com/css/api-documentation-generator/index.css" )
+  link(rel = "stylesheet" href = "https://media.dashkite.com/css/api-documentation-generator/index.css" )
+  link( rel="preload" as="style" href="https://use.typekit.net/xsi8fpm.css" )
   link( rel="stylesheet" href="https://use.typekit.net/xsi8fpm.css" )

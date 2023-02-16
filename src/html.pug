@@ -22,7 +22,4 @@ html
             .nav-items  
               for ref, key in refs 
                 a(href=`#${key}`)=ref.value.title.value ? ref.value.title.value : "Untitled"
-        +resolve({ iterable: schema, id: "top-level" })
-        for ref, key in refs
-          +resolve({ iterable: ref.value, id: key })
-                      
+        include templates/resolve

@@ -2,6 +2,11 @@
   "name": "@dashkite/schema-documentation-generator",
   "version": "0.0.0",
   "description": "",
+  "exports": {
+    ".": {
+      "node": "./build/node/src/index.js"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dashkite/dashkite/schema-documentation-generator.git"
@@ -16,11 +21,11 @@
   },
   "devDependencies": {
     "@dashkite/amen": "^0.1.2",
-    "@dashkite/amen-console": "file:../amen-console",
+    "@dashkite/amen-console": "link:../amen-console",
     "@dashkite/assert": "^0.1.4",
     "@dashkite/genie": "^0.5.6",
-    "@dashkite/genie-presets": "file:../genie-presets",
-    "@dashkite/sky-presets": "file:../sky-presets"
+    "@dashkite/genie-presets": "link:../genie-presets",
+    "@dashkite/sky-presets": "link:../sky-presets"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.9",

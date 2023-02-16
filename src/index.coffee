@@ -1,9 +1,10 @@
-import generator from "./html"
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import { isString, isArray, isObject, isNumber, isBoolean } from "@dashkite/joy/type"
 import { clone } from "@dashkite/joy/value"
-
 import FS from "fs/promises"
+
+import fullHtml from "./html"
+import resolveHtml from "./templates/resolve"
 
 ref_keys = []
 
@@ -12,7 +13,6 @@ areType = ( typeChecker, array ) ->
   for item in array
     return false unless typeChecker item
   true
-
 
 typeDecorator = ( iterable ) ->
   for key, value of iterable
@@ -34,8 +34,7 @@ typeDecorator = ( iterable ) ->
         iterable[key] = { Ctype: "array", value }
         typeDecorator iterable[key].value
 
-
-html = ( schema ) ->
+decodeSchema = ( schema ) ->
   refs = {}
   $schema = clone schema
   resolved = await $RefParser.resolve $schema, external: false
@@ -53,6 +52,14 @@ html = ( schema ) ->
   typeDecorator refs
   delete schema["$schema"]
   delete schema["$defs"]
-  generator { schema, refs }
+  { schema, refs }
 
-export { html }
+html = ( schema ) ->
+  { schema, refs } = await decodeSchema schema
+  fullHtml { schema, refs }
+
+resolve = ( schema ) ->
+  { schema, refs } = await decodeSchema schema
+  resolveHtml { schema, refs }
+
+export { html, resolve }

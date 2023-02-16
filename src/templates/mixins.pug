@@ -51,11 +51,14 @@ mixin resolve({ iterable, id, isArray })
                 if !isArray 
                   th=propertyName
                 if property.Ctype == "string" 
-                  td=property.value 
+                  td
+                    p=property.value 
                 else if property.Ctype == "number" 
-                  td=property.value 
+                  td
+                    p=property.value 
                 else if property.Ctype == "boolean"
-                  td=property.value
+                  td
+                    p=property.value 
                 else if property.Ctype == "object"
                   td
                     +resolve({ iterable: property.value })

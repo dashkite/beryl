@@ -1,0 +1,5 @@
+include mixins
+
++resolve({ iterable: schema, id: "top-level" })
+for ref, key in refs
+  +resolve({ iterable: ref.value, id: key })

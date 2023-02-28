@@ -29,7 +29,7 @@ typeDecorator = ( iterable ) ->
       typeDecorator iterable[key].value
     else if isArray value
       if areType isString, value || areType isNumber, value || areType isBoolean, value
-        iterable[key] = { Ctype: "string", value: value.toString() }
+        iterable[key] = { Ctype: "string", value: value.join ", " }
       else
         iterable[key] = { Ctype: "array", value }
         typeDecorator iterable[key].value

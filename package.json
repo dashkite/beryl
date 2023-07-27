@@ -7,6 +7,10 @@
       "node": "./build/node/src/index.js"
     }
   },
+  "scripts": {
+    "test": "genie test",
+    "build": "genie build"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dashkite/dashkite/schema-documentation-generator.git"

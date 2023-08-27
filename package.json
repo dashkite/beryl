@@ -28,7 +28,7 @@
     "@dashkite/amen-console": "link:../amen-console",
     "@dashkite/assert": "^0.1.4",
     "@dashkite/genie": "^0.5.6",
-    "@dashkite/genie-presets": "link:../genie-presets",
+    "@dashkite/genie-presets": "^0.7.0",
     "@dashkite/sky-presets": "link:../sky-presets"
   },
   "dependencies": {

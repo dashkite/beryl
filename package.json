@@ -1,5 +1,5 @@
 {
-  "name": "@dashkite/schema-documentation-generator",
+  "name": "@dashkite/beryl",
   "version": "0.0.0",
   "description": "",
   "exports": {
@@ -28,7 +28,10 @@
     "@dashkite/amen-console": "link:../amen-console",
     "@dashkite/assert": "^0.1.4",
     "@dashkite/genie": "link:../genie",
-    "@dashkite/sky-presets": "link:../sky-presets"
+    "@dashkite/genie-coffee": "link:../genie-coffee",
+    "@dashkite/genie-pug": "link:../genie-pug",
+    "@dashkite/genie-stylus": "link:../genie-stylus",
+    "@dashkite/genie-yaml": "link:../genie-yaml"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.9",

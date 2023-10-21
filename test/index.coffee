@@ -10,8 +10,9 @@ test = ( description, content ) ->
   _test { wait: false, description }, content
 
 do ({ response } = {}) ->
-  print await test "@dashkite/schema-documentation-generator", [
+  print await test "@dashkite/beryl", [
 
     await test "html", ->
+      console.log await html schema
       FS.writeFile "./test/output.html", await html schema
   ]

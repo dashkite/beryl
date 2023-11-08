@@ -1,84 +1,72 @@
-lockfileVersion: '6.0'
+lockfileVersion: 5.4
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
+specifiers:
+  '@apidevtools/json-schema-ref-parser': ^9.0.9
+  '@dashkite/amen': ^0.1.2
+  '@dashkite/amen-console': link:../amen-console
+  '@dashkite/assert': ^0.1.4
+  '@dashkite/genie': link:../genie
+  '@dashkite/genie-coffee': link:../genie-coffee
+  '@dashkite/genie-pug': link:../genie-pug
+  '@dashkite/genie-stylus': link:../genie-stylus
+  '@dashkite/genie-yaml': link:../genie-yaml
+  '@dashkite/joy': ^0.3.16
 
 dependencies:
-  '@apidevtools/json-schema-ref-parser':
-    specifier: ^9.0.9
-    version: 9.1.2
-  '@dashkite/joy':
-    specifier: ^0.3.16
-    version: 0.3.16
+  '@apidevtools/json-schema-ref-parser': 9.1.2
+  '@dashkite/joy': 0.3.16
 
 devDependencies:
-  '@dashkite/amen':
-    specifier: ^0.1.2
-    version: 0.1.2
-  '@dashkite/amen-console':
-    specifier: link:../amen-console
-    version: link:../amen-console
-  '@dashkite/assert':
-    specifier: ^0.1.4
-    version: 0.1.4
-  '@dashkite/genie':
-    specifier: link:../genie
-    version: link:../genie
-  '@dashkite/genie-coffee':
-    specifier: link:../genie-coffee
-    version: link:../genie-coffee
-  '@dashkite/genie-pug':
-    specifier: link:../genie-pug
-    version: link:../genie-pug
-  '@dashkite/genie-stylus':
-    specifier: link:../genie-stylus
-    version: link:../genie-stylus
-  '@dashkite/genie-yaml':
-    specifier: link:../genie-yaml
-    version: link:../genie-yaml
+  '@dashkite/amen': 0.1.2
+  '@dashkite/amen-console': link:../amen-console
+  '@dashkite/assert': 0.1.4
+  '@dashkite/genie': link:../genie
+  '@dashkite/genie-coffee': link:../genie-coffee
+  '@dashkite/genie-pug': link:../genie-pug
+  '@dashkite/genie-stylus': link:../genie-stylus
+  '@dashkite/genie-yaml': link:../genie-yaml
 
 packages:
 
-  /@apidevtools/json-schema-ref-parser@9.1.2:
+  /@apidevtools/json-schema-ref-parser/9.1.2:
     resolution: {integrity: sha512-r1w81DpR+KyRWd3f+rk6TNqMgedmAxZP5v5KWlXQWlgMUUtyEJch0DKEci1SorPMiSeM8XPl7MZ3miJ60JIpQg==}
     dependencies:
       '@jsdevtools/ono': 7.1.3
-      '@types/json-schema': 7.0.13
+      '@types/json-schema': 7.0.15
       call-me-maybe: 1.0.2
       js-yaml: 4.1.0
     dev: false
 
-  /@dashkite/amen@0.1.2:
+  /@dashkite/amen/0.1.2:
     resolution: {integrity: sha512-lQwxCo97oKnNrH+mNcF/fTi1WFY+YfOHBD31NDkvcu/R6HOtLQa08agyZBRk5kJrOjHYI8kAdOkjjOWw8LEC5g==}
     dev: true
 
-  /@dashkite/assert@0.1.4:
+  /@dashkite/assert/0.1.4:
     resolution: {integrity: sha512-OLOzI/lA+EwCh6znSexGAG1V4bkaT5gU04xl6ApEluv5jICnHhinZ707MObu+jhVVJ9uHDDlG85O+Afn1aTQoQ==}
     dependencies:
       '@dashkite/joy': 0.3.16
     dev: true
 
-  /@dashkite/joy@0.3.16:
+  /@dashkite/joy/0.3.16:
     resolution: {integrity: sha512-dsU0us4j1Pb+zceoBvLbnZ2PbmULkJUtM2vtWLxKmoc1DE4w9SVTiPTe6JWvF0A0vk90ldv+Lc9qEA5x3O+DtQ==}
 
-  /@jsdevtools/ono@7.1.3:
+  /@jsdevtools/ono/7.1.3:
     resolution: {integrity: sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==}
     dev: false
 
-  /@types/json-schema@7.0.13:
-    resolution: {integrity: sha512-RbSSoHliUbnXj3ny0CNFOoxrIDV6SUGyStHsvDqosw6CkdPV8TtWGlfecuK4ToyMEAql6pzNxgCFKanovUzlgQ==}
+  /@types/json-schema/7.0.15:
+    resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
     dev: false
 
-  /argparse@2.0.1:
+  /argparse/2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
     dev: false
 
-  /call-me-maybe@1.0.2:
+  /call-me-maybe/1.0.2:
     resolution: {integrity: sha512-HpX65o1Hnr9HH25ojC1YGs7HCQLq0GCOibSaWER0eNpgJ/Z1MZv2mTc7+xh6WOPxbRVcmgbv4hGU+uSQ/2xFZQ==}
     dev: false
 
-  /js-yaml@4.1.0:
+  /js-yaml/4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
     dependencies:

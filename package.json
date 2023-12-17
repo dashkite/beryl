@@ -27,7 +27,7 @@
     "@dashkite/amen": "^0.1.2",
     "@dashkite/amen-console": "link:../amen-console",
     "@dashkite/assert": "^0.1.4",
-    "@dashkite/genie": "link:../genie",
+    "@dashkite/genie": "^0.7.3",
     "@dashkite/genie-coffee": "link:../genie-coffee",
     "@dashkite/genie-pug": "link:../genie-pug",
     "@dashkite/genie-stylus": "link:../genie-stylus",

@@ -28,6 +28,7 @@
     "@dashkite/amen-console": "link:../amen-console",
     "@dashkite/assert": "^0.1.4",
     "@dashkite/genie": "^0.7.3",
+    "@dashkite/genie-clean": "link:../genie-clean",
     "@dashkite/genie-coffee": "link:../genie-coffee",
     "@dashkite/genie-pug": "link:../genie-pug",
     "@dashkite/genie-stylus": "link:../genie-stylus",

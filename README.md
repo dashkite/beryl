@@ -3,7 +3,7 @@
 *A JSON schema documentation generator.*
 
 ```coffeescript
-import Beryl from "@dashkite/berl"
+import Beryl from "@dashkite/beryl"
 import schema from "./schema"
 
 do ->

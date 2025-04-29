@@ -39,11 +39,6 @@ decodeSchema = ( schema ) ->
   $schema = clone schema
   resolved = await $RefParser.resolve $schema, external: false
   
-  # TODO The following will be a cleaner approach once onDereference 
-  # is added to an upcoming release of $RefParser.
-  # dereferenced = await $RefParser.dereference schema, 
-  #   dereference: onDereference: ( key, value ) -> refs[key] = value
-  #   resolve: external: false
 
   typeDecorator schema
   for key in ref_keys

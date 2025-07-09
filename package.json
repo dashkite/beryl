@@ -32,8 +32,7 @@
     "@dashkite/genie-coffee": "link:../genie-coffee",
     "@dashkite/genie-pug": "link:../genie-pug",
     "@dashkite/genie-stylus": "link:../genie-stylus",
-    "@dashkite/genie-yaml": "link:../genie-yaml",
-    "@dashkite/vista": "link:../vista"
+    "@dashkite/genie-yaml": "link:../genie-yaml"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.9",

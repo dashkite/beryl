@@ -32,7 +32,7 @@
     "@dashkite/genie-clean": "^0.13.2",
     "@dashkite/genie-coffee": "^0.13.3",
     "@dashkite/genie-pug": "^0.7.3",
-    "@dashkite/genie-release": "^0.4.2",
+    "@dashkite/genie-release": "^0.4.3",
     "@dashkite/genie-stylus": "^0.11.3",
     "@dashkite/genie-yaml": "^0.11.3"
   },

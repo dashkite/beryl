@@ -26,18 +26,18 @@
   },
   "devDependencies": {
     "@dashkite/amen": "^0.1.2",
-    "@dashkite/amen-console": "^0.8.0",
+    "@dashkite/amen-console": "^0.8.3",
     "@dashkite/assert": "^0.1.4",
-    "@dashkite/genie": "^0.20.4",
-    "@dashkite/genie-clean": "^0.13.0",
-    "@dashkite/genie-coffee": "^0.13.0",
-    "@dashkite/genie-pug": "^0.7.0",
-    "@dashkite/genie-release": "^0.4.1",
-    "@dashkite/genie-stylus": "^0.11.0",
-    "@dashkite/genie-yaml": "^0.11.0"
+    "@dashkite/genie": "^0.20.6",
+    "@dashkite/genie-clean": "^0.13.2",
+    "@dashkite/genie-coffee": "^0.13.2",
+    "@dashkite/genie-pug": "^0.7.2",
+    "@dashkite/genie-release": "^0.4.2",
+    "@dashkite/genie-stylus": "^0.11.2",
+    "@dashkite/genie-yaml": "^0.11.2"
   },
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "^9.0.9",
+    "@apidevtools/json-schema-ref-parser": "^9.1.2",
     "@dashkite/joy": "^0.3.16"
   }
 }

@@ -28,13 +28,13 @@
     "@dashkite/amen": "^0.1.2",
     "@dashkite/amen-console": "^0.8.3",
     "@dashkite/assert": "^0.1.4",
-    "@dashkite/genie": "^0.20.6",
-    "@dashkite/genie-clean": "^0.13.2",
-    "@dashkite/genie-coffee": "^0.13.3",
-    "@dashkite/genie-pug": "^0.7.3",
+    "@dashkite/genie": "^0.20.7",
+    "@dashkite/genie-clean": "^0.13.3",
+    "@dashkite/genie-coffee": "^0.13.4",
+    "@dashkite/genie-pug": "^0.7.4",
     "@dashkite/genie-release": "^0.4.3",
-    "@dashkite/genie-stylus": "^0.11.3",
-    "@dashkite/genie-yaml": "^0.11.3"
+    "@dashkite/genie-stylus": "^0.11.4",
+    "@dashkite/genie-yaml": "^0.11.4"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.1.2",

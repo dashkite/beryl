@@ -30,11 +30,11 @@
     "@dashkite/assert": "^0.1.4",
     "@dashkite/genie": "^0.20.9",
     "@dashkite/genie-clean": "^0.13.5",
-    "@dashkite/genie-coffee": "^0.13.6",
-    "@dashkite/genie-pug": "^0.7.6",
+    "@dashkite/genie-coffee": "^0.13.7",
+    "@dashkite/genie-pug": "^0.7.7",
     "@dashkite/genie-release": "^0.4.3",
-    "@dashkite/genie-stylus": "^0.11.6",
-    "@dashkite/genie-yaml": "^0.11.6"
+    "@dashkite/genie-stylus": "^0.11.7",
+    "@dashkite/genie-yaml": "^0.11.7"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.1.2",

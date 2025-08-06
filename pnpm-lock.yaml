@@ -25,26 +25,26 @@ importers:
         specifier: ^0.1.4
         version: 0.1.4
       '@dashkite/genie':
-        specifier: ^0.20.9
-        version: 0.20.9
+        specifier: ^0.20.10
+        version: 0.20.10
       '@dashkite/genie-clean':
-        specifier: ^0.13.5
-        version: 0.13.5
+        specifier: ^0.13.6
+        version: 0.13.6
       '@dashkite/genie-coffee':
-        specifier: ^0.13.7
-        version: 0.13.7
+        specifier: ^0.13.8
+        version: 0.13.8
       '@dashkite/genie-pug':
-        specifier: ^0.7.7
-        version: 0.7.7
+        specifier: ^0.7.8
+        version: 0.7.8
       '@dashkite/genie-release':
         specifier: ^0.4.3
         version: 0.4.3
       '@dashkite/genie-stylus':
-        specifier: ^0.11.7
-        version: 0.11.7
+        specifier: ^0.11.8
+        version: 0.11.8
       '@dashkite/genie-yaml':
-        specifier: ^0.11.7
-        version: 0.11.7
+        specifier: ^0.11.8
+        version: 0.11.8
 
 packages:
 
@@ -610,26 +610,26 @@ packages:
   '@dashkite/assert@0.1.4':
     resolution: {integrity: sha512-OLOzI/lA+EwCh6znSexGAG1V4bkaT5gU04xl6ApEluv5jICnHhinZ707MObu+jhVVJ9uHDDlG85O+Afn1aTQoQ==}
 
-  '@dashkite/genie-clean@0.13.5':
-    resolution: {integrity: sha512-II90dQHIVRQGalFlDR7twrMjtBbIfsZ+4c7uAA4trKEwaw9RpYMshVsPcRXelI7Bc/h4BW+rsuSL5siDGk+MKw==}
+  '@dashkite/genie-clean@0.13.6':
+    resolution: {integrity: sha512-zQVzI22mDjJu28Krzt4Alu60tb/8AmYFOJqLCdl4zVPWb9VUFhypW+NLrZ9uRSzGwvNdcVkmdOwFcscTeiwTdg==}
 
-  '@dashkite/genie-coffee@0.13.7':
-    resolution: {integrity: sha512-5Qx8tv/w49om6piimzbOQZFb/HtH49tgRF2YS6woP7DRt4tP56TVAaIPY1f4BqN2xDgbIJpGdhRO76tQLoolNQ==}
+  '@dashkite/genie-coffee@0.13.8':
+    resolution: {integrity: sha512-c3Mx/RNnESpYtgBHMTYK3AAWb9FTUr3TiFU5JvIYdDL0pFULkWur6/SyrUXau92lUQwn8io6ibWC2Bg2VvkuEA==}
 
-  '@dashkite/genie-pug@0.7.7':
-    resolution: {integrity: sha512-5vdpbbDGROHHC5FnNQXo/ehgPx04DgKnBkSYQa4d4Oo2Jk5s8N0LyNntUBnuby+MhJXTaQkuSicFaAH9x5rQzg==}
+  '@dashkite/genie-pug@0.7.8':
+    resolution: {integrity: sha512-ulAU1xbVTkBSohUEh2kqLxf3Rz39nGigQsTdOnposXz/59Yk7kO4qodKJBjHXQuW8Vj5xgoTukWYanIuXQ16lQ==}
 
   '@dashkite/genie-release@0.4.3':
     resolution: {integrity: sha512-9qqf7L80jmrRDPw0vhb475ed3hMDPWU782pH0bos4DdjyyObVHZePf26tgaeO9YSaFu4UC/RURxKKh+XmlqOIw==}
 
-  '@dashkite/genie-stylus@0.11.7':
-    resolution: {integrity: sha512-knuXok959fWipkTyU/wxxVySJTzd16FNCWqxe1cs6XmfEUa5/uCe6IZN9ifj9CFa0032Ekc/Zrm9xDENJdC9jw==}
+  '@dashkite/genie-stylus@0.11.8':
+    resolution: {integrity: sha512-taOXY1irEcBurWLltmb/KnbRHqf8IFvFS333SGqVSOFxEN/NoGVdmQ/CORjwRamiSEst9vJ9wREVrvWk0Rz9sg==}
 
-  '@dashkite/genie-yaml@0.11.7':
-    resolution: {integrity: sha512-WyJRJidkw0VsGZWFg/6X4MduGZ/RfuY6gFnNm2Xo4OeJGd/ME2o7U05g0YvIJ0F9cG+LqXYTvQYrDSXWt3TI3g==}
+  '@dashkite/genie-yaml@0.11.8':
+    resolution: {integrity: sha512-JqWhJBSUaz0BSqcoKk+buMIwLCu9Slhl/dl1fjsEqaQqsIe/4yjBFnkCqyUO7vaurU4+oxWhoZGscpgIltlutw==}
 
-  '@dashkite/genie@0.20.9':
-    resolution: {integrity: sha512-5EVuUP0q/xS35R/tV6EmFLwVct2ao3JSR11Ff3r5nvWUK+kP4WqvX+sLk6dgHEkc1cOZwMX03FwDN93UUqtMKQ==}
+  '@dashkite/genie@0.20.10':
+    resolution: {integrity: sha512-Ir9aw5anu9t2F0tlIfmauT1ofKzU2kGpxVfc4bnW9t+Uz7SrIrC4sauX+r/2PzrkXk/gRAhuKT7VKTz+SlYcqw==}
     engines: {node: '>=20.0.0'}
     hasBin: true
 
@@ -2348,13 +2348,13 @@ snapshots:
     dependencies:
       '@dashkite/joy': 0.3.16
 
-  '@dashkite/genie-clean@0.13.5':
+  '@dashkite/genie-clean@0.13.6':
     dependencies:
       '@dashkite/masonry': 0.21.0
     transitivePeerDependencies:
       - supports-color
 
-  '@dashkite/genie-coffee@0.13.7':
+  '@dashkite/genie-coffee@0.13.8':
     dependencies:
       '@dashkite/masonry': 0.21.0
       '@dashkite/masonry-coffee': 0.10.0
@@ -2365,7 +2365,7 @@ snapshots:
       - '@swc/helpers'
       - supports-color
 
-  '@dashkite/genie-pug@0.7.7':
+  '@dashkite/genie-pug@0.7.8':
     dependencies:
       '@dashkite/masonry': 0.21.0
       '@dashkite/masonry-hooks': 0.8.0
@@ -2380,7 +2380,7 @@ snapshots:
       '@dashkite/zephyr': 0.12.1
       dax-sh: 0.43.2
 
-  '@dashkite/genie-stylus@0.11.7':
+  '@dashkite/genie-stylus@0.11.8':
     dependencies:
       '@dashkite/masonry': 0.21.0
       '@dashkite/masonry-stylus': 0.8.0
@@ -2388,7 +2388,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@dashkite/genie-yaml@0.11.7':
+  '@dashkite/genie-yaml@0.11.8':
     dependencies:
       '@dashkite/masonry': 0.21.0
       '@dashkite/masonry-export': 0.7.0
@@ -2398,7 +2398,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@dashkite/genie@0.20.9':
+  '@dashkite/genie@0.20.10':
     dependencies:
       '@dashkite/joy': 0.7.0
       '@dashkite/kaiko': 0.3.3

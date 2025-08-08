@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@dashkite/amen": "^0.1.2",
-    "@dashkite/amen-console": "^0.8.4",
+    "@dashkite/amen-console": "^0.8.5",
     "@dashkite/assert": "^0.1.4",
     "@dashkite/genie": "^0.20.12",
     "@dashkite/genie-clean": "^0.13.10",

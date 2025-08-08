@@ -31,7 +31,7 @@
     "@dashkite/genie": "^0.20.12",
     "@dashkite/genie-clean": "^0.13.10",
     "@dashkite/genie-coffee": "^0.13.11",
-    "@dashkite/genie-module": "^0.5.36",
+    "@dashkite/genie-module": "^0.5.37",
     "@dashkite/genie-pug": "^0.7.12",
     "@dashkite/genie-release": "^0.4.3",
     "@dashkite/genie-stylus": "^0.11.12",

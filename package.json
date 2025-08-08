@@ -28,7 +28,7 @@
     "@dashkite/amen": "^0.1.2",
     "@dashkite/amen-console": "^0.8.6",
     "@dashkite/assert": "^0.1.4",
-    "@dashkite/genie": "^0.20.12",
+    "@dashkite/genie": "^0.20.13",
     "@dashkite/genie-clean": "^0.13.10",
     "@dashkite/genie-coffee": "^0.13.12",
     "@dashkite/genie-module": "^0.5.37",

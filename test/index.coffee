@@ -7,7 +7,7 @@ import { html } from "../src"
 import schema from "./schema"
 
 test = ( description, content ) ->
-  _test { wait: false, description }, content
+  _test {  description }, content
 
 do ({ response } = {}) ->
   print await test "@dashkite/beryl", [

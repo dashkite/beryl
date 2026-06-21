@@ -2,8 +2,19 @@ mixin schemaTable(iterable, refSchema)
   - var rows = []
   for property, propertyName in iterable
     if propertyName !== "title" && propertyName !== "description" && propertyName !== "properties" && propertyName !== "patternProperties"
+      if propertyName == "items" && property.Ctype == "object" && property.value.$ref
+        - continue
+      if propertyName == "$ref"
+        - continue
       - var label = getPropertyLabel(propertyName)
       - var value = formatPropertyVal(propertyName, property, refs)
+      if value !== ""
+        - rows.push({ label: label, value: value })
+
+  if iterable.patternProperties
+    for patternSchema, pattern in iterable.patternProperties.value
+      - var label = `<code>${pattern}</code>`
+      - var value = formatPropertyVal(pattern, patternSchema, refs)
       if value !== ""
         - rows.push({ label: label, value: value })
 
@@ -11,13 +22,25 @@ mixin schemaTable(iterable, refSchema)
     table
       thead
         tr
-          th Property
-          th Value
+          th
+          th
       tbody
         for row in rows
           tr
-            td= row.label
+            td: strong!= row.label
             td!= row.value
+
+mixin schemaReferences(iterable)
+  if iterable.$ref
+    - var refVal = iterable.$ref.value
+    - var refObj = refs[refVal.slice(1)]
+    - var rSchema = refObj ? refObj.value : null
+    p See: <a href="#{refVal}">#{getHeadingName(refVal, rSchema)}</a>
+  if iterable.items && iterable.items.Ctype == "object" && iterable.items.value.$ref
+    - var refVal = iterable.items.value.$ref.value
+    - var refObj = refs[refVal.slice(1)]
+    - var rSchema = refObj ? refObj.value : null
+    p See: <a href="#{refVal}">#{getHeadingName(refVal, rSchema)}</a>
 
 mixin proseProperty(propName, prop, isPattern)
   if isPattern
@@ -25,19 +48,20 @@ mixin proseProperty(propName, prop, isPattern)
   else
     h4= getHeadingName(propName, prop.value)
 
+  - var desc = prop.value.description ? prop.value.description.value : null
   if prop.Ctype == "object" && prop.value.$ref
     - var refVal = prop.value.$ref.value
     - var refObj = refs[refVal.slice(1)]
     - var refSchema = refObj ? refObj.value : null
-    - var desc = prop.value.description ? prop.value.description.value : (refSchema ? refSchema.description?.value : null)
-    if desc
-      p= desc
-    +schemaTable(prop.value, refSchema)
-  else
-    - var desc = prop.value.description ? prop.value.description.value : null
-    if desc
-      p= desc
+    - desc = desc || (refSchema && refSchema.description ? refSchema.description.value : null)
+
+  if desc
+    p= desc
+
+  if !(prop.Ctype == "object" && prop.value.$ref)
     +schemaTable(prop.value, null)
+
+  +schemaReferences(prop.value)
 
 mixin prose({ iterable, heading, id, isRoot })
   if heading
@@ -49,13 +73,9 @@ mixin prose({ iterable, heading, id, isRoot })
       p= iterable.description.value
 
   +schemaTable(iterable, null)
+  +schemaReferences(iterable)
 
   if heading && iterable.properties
     h3 Properties
     for prop, propName in iterable.properties.value
       +proseProperty(propName, prop, false)
-
-  if heading && iterable.patternProperties
-    h3 Pattern Properties
-    for prop, propName in iterable.patternProperties.value
-      +proseProperty(propName, prop, true)

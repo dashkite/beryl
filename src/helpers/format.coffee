@@ -1,9 +1,9 @@
+import { isArray } from "@dashkite/joy/type"
+import { titleCase, uncase } from "@dashkite/joy/text"
 import { pipe } from "@dashkite/joy/function"
 import {
   toLowerCase
   replace
-  titleCase
-  uncase
   startsWith
 } from "@dashkite/joy/text"
 
@@ -27,7 +27,7 @@ getHeadingName = ( key, referenceSchema ) ->
 getRefLink = ( referenceValue, references ) ->
   referenceObject = references[ referenceValue[ 1.. ]]
   referenceSchema = referenceObject?.value
-  headingName = ( Format.heading referenceValue, referenceSchema )
+  headingName = ( getHeadingName referenceValue, referenceSchema )
   slug = ( toIdentifier headingName )
   "<a href=\"##{ slug }\">#{ headingName }</a>"
 

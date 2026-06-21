@@ -12,10 +12,10 @@ import TurndownService from "turndown"
 import fullHtml from "./html"
 import resolveHtml from "./templates/resolve"
 
-import { Format } from "./formatting"
-import { Hoist } from "./hoisting"
-import { Prose } from "./prose"
-import { Tabular } from "./tabular"
+import { Format } from "./helpers/format"
+import { Hoist } from "./helpers/hoist"
+import { Prose } from "./helpers/prose"
+import { Tabular } from "./helpers/tabular"
 
 areType = ( typeChecker, array ) ->
   ( isArray array ) && ( array.every typeChecker )

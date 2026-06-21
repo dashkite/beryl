@@ -1,4 +1,4 @@
-import { Format } from "./formatting"
+import { Format } from "./format"
 
 buildProperty = ( propertyName, property, isPattern, references ) ->
   description = property.value.description?.value || null

@@ -1,88 +1,51 @@
-mixin schemaTable(iterable, refSchema)
-  - var rows = []
-  for property, propertyName in iterable
-    if propertyName !== "title" && propertyName !== "description" && propertyName !== "properties" && propertyName !== "patternProperties"
-      if propertyName == "items" && property.Ctype == "object" && property.value.$ref
-        - continue
-      if propertyName == "$ref"
-        - continue
-      - var label = getPropertyLabel(propertyName)
-      - var value = formatPropertyVal(propertyName, property, refs)
-      if value !== ""
-        - rows.push({ label: label, value: value })
-
-  if rows.length > 0
+mixin proseSection(section)
+  if section.isRoot
+    h1(id=section.id)= section.heading
+  else
+    h2(id=section.id)= section.heading
+    
+  if section.description
+    p= section.description
+    
+  if section.tableRows && section.tableRows.length > 0
     table
       thead
         tr
           th Name
           th Value
       tbody
-        for row in rows
+        for row in section.tableRows
           tr
             td!= row.label
             td!= row.value
-
-mixin schemaReferences(iterable)
-  if iterable.$ref
-    - var refVal = iterable.$ref.value
-    - var refObj = refs[refVal.slice(1)]
-    - var rSchema = refObj ? refObj.value : null
-    - var headingName = getHeadingName(refVal, rSchema)
-    - var slug = slugify(headingName)
-    p See: <a href="##{slug}">#{headingName}</a>
-  if iterable.items && iterable.items.Ctype == "object" && iterable.items.value.$ref
-    - var refVal = iterable.items.value.$ref.value
-    - var refObj = refs[refVal.slice(1)]
-    - var rSchema = refObj ? refObj.value : null
-    - var headingName = getHeadingName(refVal, rSchema)
-    - var slug = slugify(headingName)
-    p See: <a href="##{slug}">#{headingName}</a>
-
-mixin proseProperty(propName, prop, isPattern)
-  if isPattern
-    - var label = "Properties matching " + propName
-    - var slug = slugify(label)
-    h4(id=slug)
-      | Properties matching 
-      code= propName
-  else
-    - var heading = getHeadingName(propName, prop.value)
-    - var slug = slugify(heading)
-    h4(id=slug)= heading
-
-  - var desc = prop.value.description ? prop.value.description.value : null
-  if prop.Ctype == "object" && prop.value.$ref
-    - var refVal = prop.value.$ref.value
-    - var refObj = refs[refVal.slice(1)]
-    - var refSchema = refObj ? refObj.value : null
-    - desc = desc || (refSchema && refSchema.description ? refSchema.description.value : null)
-
-  if desc
-    p= desc
-
-  if !(prop.Ctype == "object" && prop.value.$ref)
-    +schemaTable(prop.value, null)
-
-  +schemaReferences(prop.value)
-
-mixin prose({ iterable, heading, id, isRoot })
-  if heading
-    if isRoot
-      h1(id=id)= heading
-    else
-      h2(id=id)= heading
-    if iterable.description
-      p= iterable.description.value
-
-  +schemaTable(iterable, null)
-  +schemaReferences(iterable)
-
-  if heading && (iterable.properties || iterable.patternProperties)
+            
+  for ref in section.references
+    p See: <a href="#{ref.href}">#{ref.text}</a>
+    
+  if section.properties && section.properties.length > 0
     h3 Properties
-    if iterable.properties
-      for prop, propName in iterable.properties.value
-        +proseProperty(propName, prop, false)
-    if iterable.patternProperties
-      for prop, propName in iterable.patternProperties.value
-        +proseProperty(propName, prop, true)
+    for prop in section.properties
+      if prop.isPattern
+        h4(id=prop.id)
+          | Properties matching 
+          code= prop.heading
+      else
+        h4(id=prop.id)= prop.heading
+        
+      if prop.description
+        p= prop.description
+        
+      if prop.tableRows && prop.tableRows.length > 0
+        table
+          thead
+            tr
+              th Name
+              th Value
+          tbody
+            for row in prop.tableRows
+              tr
+                td!= row.label
+                td!= row.value
+                
+      for ref in prop.references
+        p See: <a href="#{ref.href}">#{ref.text}</a>

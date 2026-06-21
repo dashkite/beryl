@@ -2,28 +2,25 @@ doctype html
 
 html
   head
-    - var title = schema.title ? `${schema.title.value} — Schema Reference` : "Untitled Schema Reference"
     include templates/head
 
   body
     
     main
       main
-        .block( class = "nav widest center" )
-          nav(style="--block-nav-flex-direction: column; align-items: center;")
-            header 
-              h2 Root Schema   
-            .nav-items
-              - var rootHeading = getHeadingName("top-level", schema)
-              - var rootSlug = slugify(rootHeading)
-              a(href=`#${rootSlug}`)= rootHeading
-        .block( class = "nav widest center" )
-          nav(style="--block-nav-flex-direction: column; align-items: center;")
-            header 
-              h2 Subschemas 
-            .nav-items  
-              for ref, key in refs 
-                - var heading = getHeadingName(key, ref.value)
-                - var slug = slugify(heading)
-                a(href=`#${slug}`)= heading
+        if navigation
+          .block( class = "nav widest center" )
+            nav(style="--block-nav-flex-direction: column; align-items: center;")
+              header 
+                h2 Root Schema   
+              .nav-items
+                a(href=navigation.root.href)= navigation.root.text
+          if navigation.subschemas && navigation.subschemas.length > 0
+            .block( class = "nav widest center" )
+              nav(style="--block-nav-flex-direction: column; align-items: center;")
+                header 
+                  h2 Subschemas 
+                .nav-items  
+                  for sec in navigation.subschemas
+                    a(href=sec.href)= sec.text
         include templates/resolve

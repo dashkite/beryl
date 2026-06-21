@@ -22,8 +22,8 @@ mixin schemaTable(iterable, refSchema)
     table
       thead
         tr
-          th
-          th
+          th Name
+          th Value
       tbody
         for row in rows
           tr
@@ -35,12 +35,16 @@ mixin schemaReferences(iterable)
     - var refVal = iterable.$ref.value
     - var refObj = refs[refVal.slice(1)]
     - var rSchema = refObj ? refObj.value : null
-    p See: <a href="#{refVal}">#{getHeadingName(refVal, rSchema)}</a>
+    - var headingName = getHeadingName(refVal, rSchema)
+    - var slug = slugify(headingName)
+    p See: <a href="##{slug}">#{headingName}</a>
   if iterable.items && iterable.items.Ctype == "object" && iterable.items.value.$ref
     - var refVal = iterable.items.value.$ref.value
     - var refObj = refs[refVal.slice(1)]
     - var rSchema = refObj ? refObj.value : null
-    p See: <a href="#{refVal}">#{getHeadingName(refVal, rSchema)}</a>
+    - var headingName = getHeadingName(refVal, rSchema)
+    - var slug = slugify(headingName)
+    p See: <a href="##{slug}">#{headingName}</a>
 
 mixin proseProperty(propName, prop, isPattern)
   if isPattern

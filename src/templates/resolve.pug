@@ -2,9 +2,13 @@ include mixins/prose
 include mixins/tabular
 
 if options && !options.tabular
-  +prose({ iterable: schema, heading: getHeadingName("top-level", schema), id: "top-level", isRoot: true })
+  - var rootHeading = getHeadingName("top-level", schema)
+  - var rootSlug = slugify(rootHeading)
+  +prose({ iterable: schema, heading: rootHeading, id: rootSlug, isRoot: true })
   for ref, key in refs
-    +prose({ iterable: ref.value, heading: getHeadingName(key, ref.value), id: key })
+    - var heading = getHeadingName(key, ref.value)
+    - var slug = slugify(heading)
+    +prose({ iterable: ref.value, heading: heading, id: slug })
 else
   +tabular({ iterable: schema, id: "top-level" })
   for ref, key in refs

@@ -11,6 +11,12 @@ import resolveHtml from "./templates/resolve"
 areType = ( typeChecker, array ) ->
   ( isArray array ) && ( array.every typeChecker )
 
+slugify = ( text ) ->
+  text.toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+
 getHeadingName = ( key, refSchema ) ->
   if refSchema?.title?.value?
     refSchema.title.value
@@ -18,6 +24,13 @@ getHeadingName = ( key, refSchema ) ->
     parts = key.split "/"
     lastName = parts[parts.length - 1]
     titleCase uncase lastName
+
+getRefLink = ( refVal, refs ) ->
+  refObj = refs[refVal.slice 1]
+  rSchema = refObj?.value
+  headingName = getHeadingName refVal, rSchema
+  slug = slugify headingName
+  "<a href=\"##{slug}\">#{headingName}</a>"
 
 formatTypeDirect = ( typeVal ) ->
   if !typeVal
@@ -67,20 +80,17 @@ formatSubschema = ( obj, refs ) ->
   parts.join "; "
 
 formatCombinator = ( name, arrayVal, refs ) ->
-  prefix = switch name
-    when "anyOf" then "Must match at least one of:"
-    when "allOf" then "Must match all of:"
-    when "oneOf" then "Must match exactly one of:"
-    else "Must match:"
-    
+  conjunction = if name == "allOf" then "and" else "or"
   options = []
   for item in arrayVal
     options.push formatSubschema item.value, refs
-  
-  result = prefix
-  for opt in options
-    result += "<br>• #{opt}"
-  result
+  if options.length == 1
+    options[0]
+  else if options.length == 2
+    options.join " #{conjunction} "
+  else
+    last = options.pop()
+    "#{options.join ", "}, #{conjunction} #{last}"
 
 formatPropertyVal = ( name, property, refs ) ->
   if !property?
@@ -92,10 +102,7 @@ formatPropertyVal = ( name, property, refs ) ->
     else if name == "pattern"
       "<code>#{property.value}</code>"
     else if name == "$ref" or property.value.startsWith? "#"
-      refVal = property.value
-      refObj = refs[refVal.slice 1]
-      rSchema = refObj?.value
-      "<a href=\"#{refVal}\">#{getHeadingName refVal, rSchema}</a>"
+      getRefLink property.value, refs
     else
       property.value
       
@@ -104,10 +111,7 @@ formatPropertyVal = ( name, property, refs ) ->
     
   else if property.Ctype == "object"
     if property.value.$ref
-      refVal = property.value.$ref.value
-      refObj = refs[refVal.slice 1]
-      rSchema = refObj?.value
-      "<a href=\"#{refVal}\">#{getHeadingName refVal, rSchema}</a>"
+      getRefLink property.value.$ref.value, refs
     else
       formatSubschema property.value, refs
       
@@ -119,12 +123,7 @@ formatPropertyVal = ( name, property, refs ) ->
       for item in property.value
         if item.Ctype == "object"
           if item.value.$ref
-            refVal = item.value.$ref.value
-            refObj = refs[refVal.slice 1]
-            rSchema = refObj?.value
-            options.push "<a href=\"#{refVal}\">#{
-              getHeadingName refVal, rSchema
-            }</a>"
+            options.push getRefLink item.value.$ref.value, refs
           else
             options.push formatSubschema item.value, refs
         else if item.Ctype == "string"
@@ -189,23 +188,23 @@ hoistNested = ( schema ) ->
         if isArray obj.items
           for item, index in obj.items
             if shouldHoist item
-              hoistedName = ( titleCase name ) + "Item" + index
+              hoistedName = ( titleCase name ) + "Item" + ( index + 1 )
               schema.$defs[hoistedName] = item
               if !item.title?
-                item.title = titleCase uncase hoistedName
+                item.title = ( titleCase uncase name ) + " Item " + ( index + 1 )
               refObj = { $ref: "#/$defs/#{hoistedName}" }
               if item.description?
                 refObj.description = item.description
               obj.items[index] = refObj
               traverse hoistedName, item
             else
-              traverse "#{name}Item#{index}", item
+              traverse "#{name}Item#{index + 1}", item
         else if isObject obj.items
           if shouldHoist obj.items
             hoistedName = ( titleCase name ) + "Items"
             schema.$defs[hoistedName] = obj.items
             if !obj.items.title?
-              obj.items.title = titleCase uncase hoistedName
+              obj.items.title = ( titleCase uncase name ) + " Items"
             refObj = { $ref: "#/$defs/#{hoistedName}" }
             if obj.items.description?
               refObj.description = obj.items.description
@@ -218,17 +217,17 @@ hoistNested = ( schema ) ->
         if obj[key]? && isArray obj[key]
           for item, index in obj[key]
             if shouldHoist item
-              hoistedName = ( titleCase name ) + ( titleCase key ) + index
+              hoistedName = ( titleCase name ) + "Variation" + ( index + 1 )
               schema.$defs[hoistedName] = item
               if !item.title?
-                item.title = titleCase uncase hoistedName
+                item.title = ( titleCase uncase name ) + " Variation " + ( index + 1 )
               refObj = { $ref: "#/$defs/#{hoistedName}" }
               if item.description?
                 refObj.description = item.description
               obj[key][index] = refObj
               traverse hoistedName, item
             else
-              traverse "#{name}#{titleCase key}#{index}", item
+              traverse "#{name}Variation#{index + 1}", item
 
       if obj.$defs?
         for defName, def of obj.$defs
@@ -295,6 +294,7 @@ class Schema
       getPropertyLabel
       formatCombinator
       formatPropertyVal
+      slugify
     }
 
   resolve: ( options = { tabular: true } ) ->
@@ -308,6 +308,7 @@ class Schema
       getPropertyLabel
       formatCombinator
       formatPropertyVal
+      slugify
     }
 
   markdown: ( options = {} ) ->

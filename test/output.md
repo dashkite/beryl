@@ -3,7 +3,7 @@ Rune Description
 
 A rune description describes the authorization grants for a domain.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Object |
 | **Required Properties** | domain, expires, identity, grants |
@@ -15,19 +15,19 @@ A rune description describes the authorization grants for a domain.
 
 The domain the rune description is associated with.
 
-See: [Rune Description Domain](#/$defs/RuneDescriptionDomain)
+See: [Rune Description Domain](#rune-description-domain)
 
 #### Expires
 
 A duration object that represents when the rune expires.
 
-See: [Expires](#/$defs/expires)
+See: [Expires](#expires)
 
 #### Identity
 
 The identity the rune is associated with.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | String |
 
@@ -35,23 +35,23 @@ The identity the rune is associated with.
 
 A dictionary of resolvers.
 
-See: [Rune Description Resolvers](#/$defs/RuneDescriptionResolvers)
+See: [Rune Description Resolvers](#rune-description-resolvers)
 
 #### Grants
 
 An array of grants.
 
-See: [Rune Description Grants](#/$defs/RuneDescriptionGrants)
+See: [Rune Description Grants](#rune-description-grants)
 
 Action
 ------
 
 A named policy action, whose operand may may be obtained either by specifying the value directly or an action to obtain it.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Object |
-| **Any Of** | Must match at least one of:<br>• [Action Any Of0](#/$defs/ActionAnyOf0)<br>• [Action Any Of1](#/$defs/ActionAnyOf1)<br>• [Action Any Of2](#/$defs/ActionAnyOf2) |
+| **Any Of** | [Action Variation 1](#action-variation-1), [Action Variation 2](#action-variation-2), or [Action Variation 3](#action-variation-3) |
 
 ### Properties
 
@@ -59,7 +59,7 @@ A named policy action, whose operand may may be obtained either by specifying th
 
 The name of the rule action.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | String |
 
@@ -67,7 +67,7 @@ The name of the rule action.
 
 The operand for the action, if any.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | String, Object, or Array |
 
@@ -75,26 +75,26 @@ The operand for the action, if any.
 
 A named policy action, whose operand may may be obtained either by specifying the value directly or an action to obtain it.
 
-See: [Action](#/$defs/action)
+See: [Action](#action)
 
-Action Any Of0
---------------
+Action Variation 1
+------------------
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Required Properties** | name, value |
 
-Action Any Of1
---------------
+Action Variation 2
+------------------
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Required Properties** | name, action |
 
-Action Any Of2
---------------
+Action Variation 3
+------------------
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Required Properties** | name |
 
@@ -103,52 +103,52 @@ Grant Resources
 
 A list of resources the grant applies to.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Object or Array |
 | **Max Properties** | 1 |
 | **Additional Properties** | false |
 
-See: [Grant Resources Items](#/$defs/GrantResourcesItems)
+See: [Grant Resources Items](#grant-resources-items)
 
 ### Properties
 
 #### Include
 
-See: [Grant Resources Include](#/$defs/GrantResourcesInclude)
+See: [Grant Resources Include](#grant-resources-include)
 
 #### Exclude
 
-See: [Grant Resources Exclude](#/$defs/GrantResourcesExclude)
+See: [Grant Resources Exclude](#grant-resources-exclude)
 
 Grant Methods
 -------------
 
 A list of methods the grant applies to.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Array |
 
-See: [Grant Methods Items](#/$defs/GrantMethodsItems)
+See: [Grant Methods Items](#grant-methods-items)
 
 Grant Resolvers
 ---------------
 
 A list of resolvers the grant relies on.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Array |
 
-See: [Grant Resolvers Items](#/$defs/GrantResolversItems)
+See: [Grant Resolvers Items](#grant-resolvers-items)
 
 Grant Bindings
 --------------
 
 A dictionary of bindings the grant applies to.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Object |
 | **Min Properties** | 1 |
@@ -160,7 +160,7 @@ Resolver
 
 A resolver consists of an action.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Object |
 | **Required Properties** | action |
@@ -171,14 +171,14 @@ A resolver consists of an action.
 
 A named policy action, whose operand may may be obtained either by specifying the value directly or an action to obtain it.
 
-See: [Action](#/$defs/action)
+See: [Action](#action)
 
 Grant
 -----
 
 A grant consists of a list of resources, methods, resolvers, and bindings. It describes which methods and bindings are authorized for a list of resources.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Object |
 | **Required Properties** | resources, methods, bindings |
@@ -189,48 +189,48 @@ A grant consists of a list of resources, methods, resolvers, and bindings. It de
 
 A list of resources the grant applies to.
 
-See: [Grant Resources](#/$defs/GrantResources)
+See: [Grant Resources](#grant-resources)
 
 #### Methods
 
 A list of methods the grant applies to.
 
-See: [Grant Methods](#/$defs/GrantMethods)
+See: [Grant Methods](#grant-methods)
 
 #### Resolvers
 
 A list of resolvers the grant relies on.
 
-See: [Grant Resolvers](#/$defs/GrantResolvers)
+See: [Grant Resolvers](#grant-resolvers)
 
 #### Bindings
 
 A dictionary of bindings the grant applies to.
 
-See: [Grant Bindings](#/$defs/GrantBindings)
+See: [Grant Bindings](#grant-bindings)
 
 Grant Resources Include
 -----------------------
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Array |
 
-See: [Grant Resources Include Items](#/$defs/GrantResourcesIncludeItems)
+See: [Grant Resources Include Items](#grant-resources-include-items)
 
 Grant Resources Exclude
 -----------------------
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Array |
 
-See: [Grant Resources Exclude Items](#/$defs/GrantResourcesExcludeItems)
+See: [Grant Resources Exclude Items](#grant-resources-exclude-items)
 
 Grant Resources Items
 ---------------------
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | String |
 | **Pattern** | `^(([A-Za-z0-9\-])([ ]{0,1}))+$` |
@@ -238,7 +238,7 @@ Grant Resources Items
 Grant Resources Include Items
 -----------------------------
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | String |
 | **Pattern** | `^(([A-Za-z0-9\-])([ ]{0,1}))+$` |
@@ -246,7 +246,7 @@ Grant Resources Include Items
 Grant Resources Exclude Items
 -----------------------------
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | String |
 | **Pattern** | `^(([A-Za-z0-9\-])([ ]{0,1}))+$` |
@@ -254,7 +254,7 @@ Grant Resources Exclude Items
 Grant Methods Items
 -------------------
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | String |
 | **Pattern** | `^[Gg][Ee][Tt]$\|^[Pp][Oo][Ss][Tt]$\|^[Pp][Uu][Tt]$\|^[Dd][Ee][Ll][Ee][Tt][Ee]$` |
@@ -262,7 +262,7 @@ Grant Methods Items
 Grant Resolvers Items
 ---------------------
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | String |
 | **Pattern** | `^[A-Za-z0-9\-]+$` |
@@ -272,7 +272,7 @@ Rune Description Domain
 
 The domain the rune description is associated with.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | String |
 | **Pattern** | `^([a-z0-9\-]+\.[a-z0-9\-]+){1,}\.[a-z]+$` |
@@ -282,7 +282,7 @@ Expires
 
 A duration object that represents when the rune expires.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Object |
 | **Min Properties** | 1 |
@@ -291,61 +291,61 @@ A duration object that represents when the rune expires.
 
 #### Years
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Integer |
 
 #### Months
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Integer |
 
 #### Weeks
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Integer |
 
 #### Days
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Integer |
 
 #### Hours
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Integer |
 
 #### Minutes
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Integer |
 
 #### Seconds
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Integer |
 
 #### Milliseconds
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Integer |
 
 #### Microseconds
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Integer |
 
 #### Nanoseconds
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Integer |
 
@@ -354,20 +354,20 @@ Rune Description Resolvers
 
 A dictionary of resolvers.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Object |
 | **Min Properties** | 1 |
 | **Additional Properties** | false |
-| **`^[A-Za-z0-9\-]+$`** | [Resolver](#/$defs/resolver) |
+| **`^[A-Za-z0-9\-]+$`** | [Resolver](#resolver) |
 
 Rune Description Grants
 -----------------------
 
 An array of grants.
 
-|  |  |
+| Name | Value |
 | --- | --- |
 | **Type** | Array |
 
-See: [Grant](#/$defs/grant)
+See: [Grant](#grant)

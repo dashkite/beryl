@@ -1,7 +1,6 @@
-import { getHeadingName, slugify, getPropertyLabel } from "./helpers"
-import { formatPropertyVal } from "./formatting"
+import { Format } from "./formatting"
 
-buildPropertySection = ( propertyName, property, isPattern, references ) ->
+buildProperty = ( propertyName, property, isPattern, references ) ->
   description = property.value.description?.value || null
   if property.Ctype == "object" && property.value.$ref?
     referenceValue = property.value.$ref.value
@@ -21,8 +20,8 @@ buildPropertySection = ( propertyName, property, isPattern, references ) ->
         if subPropertyName == "$ref"
           continue
         
-        label = getPropertyLabel subPropertyName
-        value = ( formatPropertyVal subPropertyName, subProperty, references )
+        label = Format.label subPropertyName
+        value = ( Format.property subPropertyName, subProperty, references )
         if value != ""
           tableRows.push { label, value }
           
@@ -30,24 +29,24 @@ buildPropertySection = ( propertyName, property, isPattern, references ) ->
   if property.Ctype == "object" && property.value.$ref?
     referenceValue = property.value.$ref.value
     headingName =
-      ( getHeadingName referenceValue,
+      ( Format.heading referenceValue,
         references[ referenceValue.slice( 1 ) ]?.value )
-    referenceList.push { href: "##{ slugify headingName }", text: headingName }
+    referenceList.push { href: "##{ Format.identifier headingName }", text: headingName }
     
   if property.value.items? && property.value.items.Ctype == "object" &&
   property.value.items.value.$ref?
     referenceValue = property.value.items.value.$ref.value
     headingName =
-      ( getHeadingName referenceValue,
+      ( Format.heading referenceValue,
         references[ referenceValue.slice( 1 ) ]?.value )
-    referenceList.push { href: "##{ slugify headingName }", text: headingName }
+    referenceList.push { href: "##{ Format.identifier headingName }", text: headingName }
 
   if isPattern
     heading = propertyName
-    id = ( slugify ( "Properties matching " + propertyName ) )
+    id = ( Format.identifier ( "Properties matching " + propertyName ))
   else
-    heading = ( getHeadingName propertyName, property.value )
-    id = ( slugify heading )
+    heading = ( Format.heading propertyName, property.value )
+    id = ( Format.identifier heading )
 
   id: id
   heading: heading
@@ -57,8 +56,8 @@ buildPropertySection = ( propertyName, property, isPattern, references ) ->
   references: referenceList
 
 buildSection = ( key, iterable, isRoot, references ) ->
-  heading = ( getHeadingName key, iterable )
-  id = ( slugify heading )
+  heading = ( Format.heading key, iterable )
+  id = ( Format.identifier heading )
   
   description = iterable.description?.value || null
   
@@ -74,8 +73,8 @@ buildSection = ( key, iterable, isRoot, references ) ->
       if propertyName == "$ref"
         continue
       
-      label = getPropertyLabel propertyName
-      value = ( formatPropertyVal propertyName, property, references )
+      label = Format.label propertyName
+      value = ( Format.property propertyName, property, references )
       if value != ""
         tableRows.push { label, value }
         
@@ -83,29 +82,29 @@ buildSection = ( key, iterable, isRoot, references ) ->
   if iterable.$ref?
     referenceValue = iterable.$ref.value
     headingName =
-      ( getHeadingName referenceValue,
+      ( Format.heading referenceValue,
         references[ referenceValue.slice( 1 ) ]?.value )
-    referenceList.push { href: "##{ slugify headingName }", text: headingName }
+    referenceList.push { href: "##{ Format.identifier headingName }", text: headingName }
     
   if iterable.items? && iterable.items.Ctype == "object" &&
   iterable.items.value.$ref?
     referenceValue = iterable.items.value.$ref.value
     headingName =
-      ( getHeadingName referenceValue,
+      ( Format.heading referenceValue,
         references[ referenceValue.slice( 1 ) ]?.value )
-    referenceList.push { href: "##{ slugify headingName }", text: headingName }
+    referenceList.push { href: "##{ Format.identifier headingName }", text: headingName }
 
   properties = []
   if iterable.properties?
     for propertyName, property of iterable.properties.value
       properties.push(
-        ( buildPropertySection propertyName, property, false, references )
+        ( buildProperty propertyName, property, false, references )
       )
       
   if iterable.patternProperties?
     for pattern, patternSchema of iterable.patternProperties.value
       properties.push(
-        ( buildPropertySection pattern, patternSchema, true, references )
+        ( buildProperty pattern, patternSchema, true, references )
       )
       
   id: id
@@ -116,15 +115,15 @@ buildSection = ( key, iterable, isRoot, references ) ->
   references: referenceList
   properties: properties
 
-buildProseViewModel = ( schema, references ) ->
+build = ( schema, references ) ->
   sections = []
-  sections.push( ( buildSection "top-level", schema, true, references ) )
+  sections.push( ( buildSection "top-level", schema, true, references ))
   for key, reference of references
-    sections.push( ( buildSection key, reference.value, false, references ) )
+    sections.push( ( buildSection key, reference.value, false, references ))
   sections
 
-export {
-  buildPropertySection
-  buildSection
-  buildProseViewModel
+Prose = {
+  build
 }
+
+export { Prose }

@@ -12,10 +12,13 @@ import TurndownService from "turndown"
 import fullHtml from "./html"
 import resolveHtml from "./templates/resolve"
 
-import { areType } from "./helpers"
-import { hoistNested } from "./hoisting"
-import { buildProseViewModel } from "./prose"
-import { buildTabularSections } from "./tabular"
+import { Format } from "./formatting"
+import { Hoist } from "./hoisting"
+import { Prose } from "./prose"
+import { Tabular } from "./tabular"
+
+areType = ( typeChecker, array ) ->
+  ( isArray array ) && ( array.every typeChecker )
 
 class Schema
 
@@ -25,10 +28,10 @@ class Schema
   decode: ->
     @referenceKeys = []
     @schema = clone @source
-    hoistNested @schema
+    Hoist.nested @schema
     
     resolvedSchema = clone @source
-    hoistNested resolvedSchema
+    Hoist.nested resolvedSchema
     
     resolved = await $RefParser.resolve( resolvedSchema, external: false )
     @decorator @schema
@@ -65,7 +68,7 @@ class Schema
   html: ( options = { tabular: true } ) ->
     await @decode()
     if !options.tabular
-      sections = buildProseViewModel @schema, @references
+      sections = Prose.build @schema, @references
       
       title = if @schema.title?.value?
         "#{ @schema.title.value } — Schema Reference"
@@ -76,7 +79,7 @@ class Schema
         
       navigation = if sections[ 0 ]?
         sublist =
-          ( { href: "##{ sec.id }", text: sec.heading } for sec in sections.slice 1 )
+          ( { href: "##{ sec.id }", text: sec.heading } for sec in sections.slice( 1 ))
         root: { href: "##{ sections[ 0 ].id }", text: sections[ 0 ].heading }
         subschemas: sublist
       else
@@ -84,7 +87,7 @@ class Schema
         
       fullHtml { @schema, sections, options, title, navigation }
     else
-      tabular = buildTabularSections @schema, @references
+      tabular = Tabular.build @schema, @references
       
       title = if @schema.title?.value?
         "#{ @schema.title.value } — Schema Reference"
@@ -104,10 +107,10 @@ class Schema
   resolve: ( options = { tabular: true } ) ->
     await @decode()
     if !options.tabular
-      sections = buildProseViewModel @schema, @references
+      sections = Prose.build @schema, @references
       resolveHtml { @schema, sections, options }
     else
-      tabular = buildTabularSections @schema, @references
+      tabular = Tabular.build @schema, @references
       resolveHtml { @schema, tabular, options }
 
   markdown: ( options = {} ) ->
@@ -118,10 +121,10 @@ class Schema
     turndown.addRule 'table',
       filter: 'table'
       replacement: ( content, node ) ->
-        rows = Array.from( node.querySelectorAll 'tr' )
+        rows = Array.from( node.querySelectorAll( "tr" ))
         mdRows = []
         for row in rows
-          cells = Array.from( row.querySelectorAll 'th, td' )
+          cells = Array.from( row.querySelectorAll( "th, td" ))
           mdCells = []
           for cell in cells
             html = cell.innerHTML.replace( /<br\s*\/?>/gi, '^^BR^^' )
@@ -134,7 +137,7 @@ class Schema
         if mdRows.length > 0
           headerRow = mdRows[ 0 ]
           cellsCount =
-            Array.from( rows[ 0 ].querySelectorAll 'th, td' ).length
+            Array.from( rows[ 0 ].querySelectorAll( "th, td" )).length
           separatorCells = ( "---" for i in [ 1..cellsCount ] )
           separatorRow = "| " + separatorCells.join( " | " ) + " |"
           mdRows.splice 1, 0, separatorRow

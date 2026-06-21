@@ -11,9 +11,47 @@ check = ( object ) ->
   else
     false
 
+parseHoistedName = ( hoistedName ) ->
+  match = hoistedName.match /(.*)(Item\d+|Items|Variation\d+)$/
+  
+  if match
+    prefix = match[ 1 ]
+    suffix = match[ 2 ]
+    formattedSuffix = suffix.replace /(\d+)/, " $1"
+    prefixWords = prefix.match( /[A-Z][a-z0-9]*/g ) || []
+    
+    if prefixWords.length > 0
+      baseWord = prefixWords[ prefixWords.length - 1 ]
+      parentWords = prefixWords[ 0..( prefixWords.length - 2 ) ]
+      baseTitle = "#{ baseWord } #{ formattedSuffix }"
+      parentTitle = if parentWords.length > 0
+        ( titleCase ( uncase parentWords.join " " ))
+      else
+        ""
+    else
+      baseTitle = formattedSuffix
+      parentTitle = ""
+  else
+    words = hoistedName.match( /[A-Z][a-z0-9]*/g ) || [ hoistedName ]
+    len = words.length
+    if len >= 2
+      baseWords = [ words[ len - 1 ] ]
+      parentWords = words[ 0..( len - 2 ) ]
+    else
+      baseWords = words
+      parentWords = []
+      
+    baseTitle = ( titleCase ( uncase baseWords.join " " ))
+    parentTitle = if parentWords.length > 0
+      ( titleCase ( uncase parentWords.join " " ))
+    else
+      ""
+      
+  { baseTitle, parentTitle }
+
 nested = ( schema ) ->
   schema.$defs = schema.$defs || {}
-  hoistedProperties = []
+  definitionsToTitle = {}
   
   traverse = ( name, object ) ->
     if isObject object
@@ -23,11 +61,7 @@ nested = ( schema ) ->
             hoistedName = ( titleCase name ) + ( titleCase propertyName )
             schema.$defs[ hoistedName ] = property
             if !property.title?
-              hoistedProperties.push {
-                schema: property
-                propertyName: propertyName
-                parentName: name
-              }
+              definitionsToTitle[ hoistedName ] = { definition: property }
             
             referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
             if property.description?
@@ -45,7 +79,7 @@ nested = ( schema ) ->
             hoistedName = ( titleCase name ) + ( titleCase cleanPattern )
             schema.$defs[ hoistedName ] = patternSchema
             if !patternSchema.title?
-              patternSchema.title = ( titleCase ( uncase hoistedName ))
+              definitionsToTitle[ hoistedName ] = { definition: patternSchema }
             
             referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
             if patternSchema.description?
@@ -63,8 +97,7 @@ nested = ( schema ) ->
               hoistedName = ( titleCase name ) + "Item" + ( index + 1 )
               schema.$defs[ hoistedName ] = item
               if !item.title?
-                item.title =
-                  ( titleCase ( uncase name )) + " Item " + ( index + 1 )
+                definitionsToTitle[ hoistedName ] = { definition: item }
               referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
               if item.description?
                 referenceObject.description = item.description
@@ -77,8 +110,7 @@ nested = ( schema ) ->
             hoistedName = ( titleCase name ) + "Items"
             schema.$defs[ hoistedName ] = object.items
             if !object.items.title?
-              object.items.title =
-                ( titleCase ( uncase name )) + " Items"
+              definitionsToTitle[ hoistedName ] = { definition: object.items }
             referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
             if object.items.description?
               referenceObject.description = object.items.description
@@ -94,8 +126,7 @@ nested = ( schema ) ->
               hoistedName = ( titleCase name ) + "Variation" + ( index + 1 )
               schema.$defs[ hoistedName ] = item
               if !item.title?
-                item.title =
-                  ( titleCase ( uncase name )) + " Variation " + ( index + 1 )
+                definitionsToTitle[ hoistedName ] = { definition: item }
               referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
               if item.description?
                 referenceObject.description = item.description
@@ -117,28 +148,24 @@ nested = ( schema ) ->
  
   frequencies = {}
   for definitionName, definition of schema.$defs
-    matchingHp = null
-    for hp in hoistedProperties
-      if hp.schema == definition
-        matchingHp = hp
-        break
-        
-    baseTitle = if matchingHp?
-      ( titleCase ( uncase matchingHp.propertyName ))
-    else if definition.title?
-      definition.title
+    if definitionsToTitle[ definitionName ]?
+      info = definitionsToTitle[ definitionName ]
+      { baseTitle, parentTitle } = ( parseHoistedName definitionName )
+      info.baseTitle = baseTitle
+      info.parentTitle = parentTitle
     else
-      ( titleCase ( uncase definitionName ))
-      
+      baseTitle = if definition.title?
+        definition.title
+      else
+        ( titleCase ( uncase definitionName ))
+        
     frequencies[ baseTitle ] = ( frequencies[ baseTitle ] || 0 ) + 1
  
-  for hp in hoistedProperties
-    baseTitle = ( titleCase ( uncase hp.propertyName ))
-    if frequencies[ baseTitle ] > 1
-      parentTitle = ( titleCase ( uncase hp.parentName ))
-      hp.schema.title = "#{ baseTitle } (#{ parentTitle })"
+  for definitionName, info of definitionsToTitle
+    if frequencies[ info.baseTitle ] > 1 && info.parentTitle != ""
+      info.definition.title = "#{ info.baseTitle } (#{ info.parentTitle })"
     else
-      hp.schema.title = baseTitle
+      info.definition.title = info.baseTitle
 
 Hoist = {
   check

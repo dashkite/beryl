@@ -1,7 +1,7 @@
 Rune Description
 ================
 
-[Action](#action) | [Action Variation 1](#action-variation-1) | [Action Variation 2](#action-variation-2) | [Action Variation 3](#action-variation-3) | [Resources](#resources) | [Methods](#methods) | [Resolvers (Grant)](#resolvers-grant) | [Bindings](#bindings) | [Resolver](#resolver) | [Grant](#grant) | [Include](#include) | [Exclude](#exclude) | [Grant Resources Items](#grant-resources-items) | [Grant Resources Include Items](#grant-resources-include-items) | [Grant Resources Exclude Items](#grant-resources-exclude-items) | [Grant Methods Items](#grant-methods-items) | [Grant Resolvers Items](#grant-resolvers-items) | [Domain](#domain) | [Expires](#expires) | [Resolvers (Rune Description)](#resolvers-rune-description) | [Grants](#grants)
+[Action](#action) | [Action Variation 1](#action-variation-1) | [Action Variation 2](#action-variation-2) | [Action Variation 3](#action-variation-3) | [Resources](#resources) | [Methods](#methods) | [Resolvers (Grant)](#resolvers-grant) | [Bindings](#bindings) | [Resolver](#resolver) | [Grant](#grant) | [Include](#include) | [Exclude](#exclude) | [Resources Items](#resources-items) | [Include Items](#include-items) | [Exclude Items](#exclude-items) | [Methods Items](#methods-items) | [Resolvers Items](#resolvers-items) | [Domain](#domain) | [Expires](#expires) | [Resolvers (Rune Description)](#resolvers-rune-description) | [Grants](#grants)
 
 A rune description describes the authorization grants for a domain.
 
@@ -111,7 +111,7 @@ A list of resources the grant applies to.
 | Max Properties | 1 |
 | Additional Properties | false |
 
-See: [Grant Resources Items](#grant-resources-items)
+See: [Resources Items](#resources-items)
 
 ### Properties
 
@@ -132,7 +132,7 @@ A list of methods the grant applies to.
 | --- | --- |
 | Type | Array |
 
-See: [Grant Methods Items](#grant-methods-items)
+See: [Methods Items](#methods-items)
 
 Resolvers (Grant)
 -----------------
@@ -143,7 +143,7 @@ A list of resolvers the grant relies on.
 | --- | --- |
 | Type | Array |
 
-See: [Grant Resolvers Items](#grant-resolvers-items)
+See: [Resolvers Items](#resolvers-items)
 
 Bindings
 --------
@@ -225,7 +225,7 @@ Include
 | --- | --- |
 | Type | Array |
 
-See: [Grant Resources Include Items](#grant-resources-include-items)
+See: [Include Items](#include-items)
 
 Exclude
 -------
@@ -234,42 +234,42 @@ Exclude
 | --- | --- |
 | Type | Array |
 
-See: [Grant Resources Exclude Items](#grant-resources-exclude-items)
+See: [Exclude Items](#exclude-items)
 
-Grant Resources Items
----------------------
-
-| Name | Value |
-| --- | --- |
-| Type | String |
-| Pattern | `^(([A-Za-z0-9\-])([ ]{0,1}))+$` |
-
-Grant Resources Include Items
------------------------------
+Resources Items
+---------------
 
 | Name | Value |
 | --- | --- |
 | Type | String |
 | Pattern | `^(([A-Za-z0-9\-])([ ]{0,1}))+$` |
 
-Grant Resources Exclude Items
------------------------------
+Include Items
+-------------
 
 | Name | Value |
 | --- | --- |
 | Type | String |
 | Pattern | `^(([A-Za-z0-9\-])([ ]{0,1}))+$` |
 
-Grant Methods Items
--------------------
+Exclude Items
+-------------
+
+| Name | Value |
+| --- | --- |
+| Type | String |
+| Pattern | `^(([A-Za-z0-9\-])([ ]{0,1}))+$` |
+
+Methods Items
+-------------
 
 | Name | Value |
 | --- | --- |
 | Type | String |
 | Pattern | `^[Gg][Ee][Tt]$\|^[Pp][Oo][Ss][Tt]$\|^[Pp][Uu][Tt]$\|^[Dd][Ee][Ll][Ee][Tt][Ee]$` |
 
-Grant Resolvers Items
----------------------
+Resolvers Items
+---------------
 
 | Name | Value |
 | --- | --- |

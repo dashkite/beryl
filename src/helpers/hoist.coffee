@@ -1,6 +1,9 @@
 import { isObject, isArray } from "@dashkite/joy/type"
 import { titleCase, uncase } from "@dashkite/joy/text"
 
+# Verify if a subschema is eligible for hoisting to the global $defs section.
+# We only hoist objects that contain structural constraints beyond simple metadata
+# (e.g. properties, combinators, constraints) and aren't already reference pointers.
 check = ( object ) ->
   if ( isObject object ) && !object.$ref?
     hasOtherKeys = false
@@ -11,6 +14,9 @@ check = ( object ) ->
   else
     false
 
+# Parses a concatenated camel-cased hoisted name back into its constituent words.
+# Extracts a 'baseTitle' (what the subschema represents, ex: "Variation 1" or "Include Items")
+# and a 'parentTitle' (its parent property namespace) to handle conflict resolution.
 parseHoistedName = ( hoistedName ) ->
   match = ( hoistedName.match /(.*)(Item\d+|Items|Variation\d+)$/ )
   
@@ -49,6 +55,8 @@ parseHoistedName = ( hoistedName ) ->
       
   { baseTitle, parentTitle }
 
+# The Hoister class encapsulates schema traversal state to isolate global mutations.
+# It registers all hoisted definitions directly under the root schema's `$defs` block.
 class Hoister
   constructor: ( @schema ) ->
     @schema.$defs ?= {}
@@ -63,6 +71,8 @@ class Hoister
     ( @traverse rootName, @schema )
     ( @assignTitles() )
 
+  # Registers qualifying subschemas under $defs, tracks their original location for 
+  # naming frequency checks, and returns a $ref replacement pointer object.
   hoist: ( name, propName, schemaObj ) ->
     if ( check schemaObj )
       hoistedName = ( titleCase name ) + ( titleCase propName )
@@ -76,6 +86,8 @@ class Hoister
     else
       null
 
+  # Recursively walks the schema tree, inspecting fields like properties, 
+  # patternProperties, items, and combinators to find and hoist nested subschemas.
   traverse: ( name, object ) ->
     if isObject object
       if object.properties?
@@ -123,6 +135,9 @@ class Hoister
         for definitionName, definition of object.$defs
           ( @traverse definitionName, definition )
 
+  # Evaluates all hoisted titles to resolve collisions.
+  # If a base title is duplicated across different paths, it dynamically appends 
+  # parenthetical parent context (e.g., "Resolvers (Grant)") to ensure uniqueness.
   assignTitles: ->
     frequencies = {}
     for definitionName, definition of @schema.$defs

@@ -1,5 +1,7 @@
 import { Format } from "./format"
 
+# Extracts external reference links ($ref) from properties or array items.
+# Resolves the referenced definition schema to obtain its formatted header name.
 getReferences = ( iterable, references ) ->
   list = []
   if iterable.$ref?
@@ -12,6 +14,8 @@ getReferences = ( iterable, references ) ->
     ( list.push { href: "##{ Format.identifier heading }", text: heading } )
   list
 
+# Filters and extracts metadata constraints (such as type, minProperties, required, etc.)
+# from a schema node to form rows of key-value definitions for the prose tables.
 getTableRows = ( iterable, references ) ->
   rows = []
   for key, value of iterable
@@ -26,6 +30,8 @@ getTableRows = ( iterable, references ) ->
         ( rows.push { label, value: valStr } )
   rows
 
+# Compiles the view-model representation for an individual schema property.
+# Determines description fallback priorities, tables rows, and reference links.
 buildProperty = ( propertyName, property, isPattern, references ) ->
   description = property.value.description?.value || null
   if property.Ctype == "object" && property.value.$ref?
@@ -53,6 +59,8 @@ buildProperty = ( propertyName, property, isPattern, references ) ->
   tableRows: tableRows
   references: referenceList
 
+# Compiles the view-model section for a schema definition (root or hoisted subschema).
+# Gathers all direct child properties and pattern properties.
 buildSection = ( key, iterable, isRoot, references ) ->
   heading = ( Format.heading key, iterable )
   id = ( Format.identifier heading )

@@ -10,6 +10,10 @@ import {
 
 import labels from "./labels"
 
+# Convert schema titles to valid URL slugs / anchor IDs.
+# Joy's `dash` strips non-alphanumeric characters, but due to pipeline ordering
+# in `gloss`, this can leave adjacent spaces that result in double hyphens.
+# We explicitly collapse consecutive hyphens to ensure clean output.
 toIdentifier = pipe [
   dash
   replace( /-+/g, "-" )
@@ -30,6 +34,9 @@ getRefLink = ( referenceValue, references ) ->
   id = ( toIdentifier headingName )
   "<a href=\"##{ id }\">#{ headingName }</a>"
 
+# Formats string-type schema properties.
+# Dispatches on the property name to produce direct type mappings, code blocks 
+# for regex patterns, links for required arrays, or standard links for $refs.
 formatString = ( name, property, references ) ->
   if name == "type"
     ( Format.direct property.value )
@@ -80,6 +87,8 @@ Format =
   reference: getRefLink
   label: ( name ) -> labels[ name ] || ( titleCase ( uncase name ))
 
+  # Formats raw type names into a grammatically correct natural language list.
+  # For example, "string, object, array" -> "String, Object, or Array".
   direct: ( typeValue ) ->
     if !typeValue
       "Object"
@@ -98,6 +107,9 @@ Format =
     type = propertySchema.type?.value || referenceSchema?.type?.value
     ( Format.direct type )
 
+  # Formats nested inline object structures.
+  # If the schema is just a single $ref, formats as a direct reference link.
+  # Otherwise, builds a semicolon-separated string of key-value property descriptions.
   subschema: ( object, references ) ->
     keys =
       ( key for key, value of object when key not in [
@@ -113,6 +125,8 @@ Format =
           ( parts.push "#{ Format.label key }: #{ formattedValue }" )
       ( parts.join "; " )
 
+  # Formats logical combinator arrays (allOf, anyOf, oneOf) into a conjunction-joined list.
+  # For example, allOf -> "A and B", anyOf -> "A, B, or C".
   combinator: ( name, arrayValue, references ) ->
     conjunction = if name == "allOf" then "and" else "or"
     options = []

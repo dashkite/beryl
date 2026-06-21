@@ -3,8 +3,11 @@ Rune Description
 
 **Type:** _Object_. A rune description describes the authorization grants for a domain.
 
-*   **required:** domain, expires, identity, grants
 *   **additionalProperties:** false
+
+### Required Properties
+
+domain, expires, identity, grants
 
 ### Properties
 
@@ -16,7 +19,7 @@ Rune Description
 
 #### Expires
 
-**Type:** _Object_.
+**Type:** _Object_. A duration object that represents when the rune expires.
 
 See [Expires](#/$defs/expires).
 
@@ -61,7 +64,7 @@ Action
 
 #### Action
 
-**Type:** _Object_.
+**Type:** _Object_. A named policy action, whose operand may may be obtained either by specifying the value directly or an action to obtain it.
 
 See [Action](#/$defs/action).
 
@@ -148,13 +151,15 @@ Resolver
 
 **Type:** _Object_. A resolver consists of an action.
 
-*   **required:** action
+### Required Properties
+
+action
 
 ### Properties
 
 #### Action
 
-**Type:** _Object_.
+**Type:** _Object_. A named policy action, whose operand may may be obtained either by specifying the value directly or an action to obtain it.
 
 See [Action](#/$defs/action).
 
@@ -163,13 +168,15 @@ Grant
 
 **Type:** _Object_. A grant consists of a list of resources, methods, resolvers, and bindings. It describes which methods and bindings are authorized for a list of resources.
 
-*   **required:** resources, methods, bindings
+### Required Properties
+
+resources, methods, bindings
 
 ### Properties
 
 #### Resources
 
-**Type:** _Object_. A list of resources the grant applies to.
+**Type:** _Object, Array_. A list of resources the grant applies to.
 
 See [Grant Resources](#/$defs/GrantResources).
 

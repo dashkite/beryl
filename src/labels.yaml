@@ -1,0 +1,11 @@
+type: Type
+required: Required Properties
+additionalProperties: Additional Properties
+minProperties: Min Properties
+maxProperties: Max Properties
+pattern: Pattern
+patternProperties: Pattern Properties
+anyOf: Any Of
+allOf: All Of
+oneOf: One Of
+$ref: Reference

@@ -4,7 +4,7 @@ buildProperty = ( propertyName, property, isPattern, references ) ->
   description = property.value.description?.value || null
   if property.Ctype == "object" && property.value.$ref?
     referenceValue = property.value.$ref.value
-    referenceSchema = references[ referenceValue.slice( 1 ) ]?.value
+    referenceSchema = references[ referenceValue[ 1.. ]]?.value
     description = description || referenceSchema?.description?.value || null
     
   tableRows = []
@@ -30,7 +30,7 @@ buildProperty = ( propertyName, property, isPattern, references ) ->
     referenceValue = property.value.$ref.value
     headingName =
       ( Format.heading referenceValue,
-        references[ referenceValue.slice( 1 ) ]?.value )
+        references[ referenceValue[ 1.. ]]?.value )
     referenceList.push { href: "##{ Format.identifier headingName }", text: headingName }
     
   if property.value.items? && property.value.items.Ctype == "object" &&
@@ -38,7 +38,7 @@ buildProperty = ( propertyName, property, isPattern, references ) ->
     referenceValue = property.value.items.value.$ref.value
     headingName =
       ( Format.heading referenceValue,
-        references[ referenceValue.slice( 1 ) ]?.value )
+        references[ referenceValue[ 1.. ]]?.value )
     referenceList.push { href: "##{ Format.identifier headingName }", text: headingName }
 
   if isPattern
@@ -83,7 +83,7 @@ buildSection = ( key, iterable, isRoot, references ) ->
     referenceValue = iterable.$ref.value
     headingName =
       ( Format.heading referenceValue,
-        references[ referenceValue.slice( 1 ) ]?.value )
+        references[ referenceValue[ 1.. ]]?.value )
     referenceList.push { href: "##{ Format.identifier headingName }", text: headingName }
     
   if iterable.items? && iterable.items.Ctype == "object" &&
@@ -91,7 +91,7 @@ buildSection = ( key, iterable, isRoot, references ) ->
     referenceValue = iterable.items.value.$ref.value
     headingName =
       ( Format.heading referenceValue,
-        references[ referenceValue.slice( 1 ) ]?.value )
+        references[ referenceValue[ 1.. ]]?.value )
     referenceList.push { href: "##{ Format.identifier headingName }", text: headingName }
 
   properties = []

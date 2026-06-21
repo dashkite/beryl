@@ -1,11 +1,20 @@
-import { isArray } from "@dashkite/joy/type"
-import { titleCase, uncase } from "@dashkite/joy/text"
+import { pipe } from "@dashkite/joy/function"
+import {
+  toLowerCase
+  replace
+  titleCase
+  uncase
+  startsWith
+} from "@dashkite/joy/text"
 
-toIdentifier = ( text ) ->
-  text.toLowerCase()
-    .replace( /[^a-z0-9\s-]/g, "" )
-    .replace( /\s+/g, "-" )
-    .replace( /-+/g, "-" )
+import labels from "./labels"
+
+toIdentifier = pipe [
+  toLowerCase
+  replace( /[^a-z0-9\s-]/g, "" )
+  replace( /\s+/g, "-" )
+  replace( /-+/g, "-" )
+]
 
 getHeadingName = ( key, referenceSchema ) ->
   if referenceSchema?.title?.value?
@@ -16,32 +25,17 @@ getHeadingName = ( key, referenceSchema ) ->
     ( titleCase ( uncase lastName ))
 
 getRefLink = ( referenceValue, references ) ->
-  referenceObject = references[ referenceValue.slice( 1 ) ]
+  referenceObject = references[ referenceValue[ 1.. ]]
   referenceSchema = referenceObject?.value
-  headingName = ( getHeadingName referenceValue, referenceSchema )
+  headingName = ( Format.heading referenceValue, referenceSchema )
   slug = ( toIdentifier headingName )
   "<a href=\"##{ slug }\">#{ headingName }</a>"
-
-getPropertyLabel = ( name ) ->
-  switch name
-    when "type" then "Type"
-    when "required" then "Required Properties"
-    when "additionalProperties" then "Additional Properties"
-    when "minProperties" then "Min Properties"
-    when "maxProperties" then "Max Properties"
-    when "pattern" then "Pattern"
-    when "patternProperties" then "Pattern Properties"
-    when "anyOf" then "Any Of"
-    when "allOf" then "All Of"
-    when "oneOf" then "One Of"
-    when "$ref" then "Reference"
-    else ( titleCase ( uncase name ))
 
 Format =
   identifier: toIdentifier
   heading: getHeadingName
   reference: getRefLink
-  label: getPropertyLabel
+  label: ( name ) -> labels[ name ] || ( titleCase ( uncase name ))
 
   direct: ( typeValue ) ->
     if !typeValue
@@ -106,7 +100,7 @@ Format =
             slug = ( Format.identifier title )
             links.push( "<a href=\"##{ slug }\">#{ title }</a>" )
           links.join( ", " )
-        else if name == "$ref" || property.value.startsWith? "#"
+        else if name == "$ref" || ( startsWith "#", property.value )
           ( Format.reference property.value, references )
         else
           property.value

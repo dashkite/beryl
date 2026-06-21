@@ -37,7 +37,7 @@ class Schema
     @decorator @schema
     @references = {}
     for key in @referenceKeys
-      cleanKey = key.slice( 1 )
+      cleanKey = key[ 1.. ]
       @references[ cleanKey ] = resolved.get( key )
     @decorator @references
     delete @schema[ "$schema" ]
@@ -79,7 +79,7 @@ class Schema
         
       navigation = if sections[ 0 ]?
         sublist =
-          ( { href: "##{ sec.id }", text: sec.heading } for sec in sections.slice( 1 ))
+          ( { href: "##{ sec.id }", text: sec.heading } for sec in sections[ 1.. ])
         root: { href: "##{ sections[ 0 ].id }", text: sections[ 0 ].heading }
         subschemas: sublist
       else

@@ -6,7 +6,6 @@ import {
   isNumber
   isBoolean
 } from "@dashkite/joy/type"
-import { clone } from "@dashkite/joy/value"
 import TurndownService from "turndown"
 
 import fullHtml from "./html"
@@ -27,10 +26,10 @@ class Schema
 
   decode: ->
     @referenceKeys = []
-    @schema = ( clone @source )
+    @schema = ( structuredClone @source )
     ( Hoist.nested @schema )
     
-    resolvedSchema = ( clone @source )
+    resolvedSchema = ( structuredClone @source )
     ( Hoist.nested resolvedSchema )
     
     resolved = await ( $RefParser.resolve resolvedSchema, external: false )

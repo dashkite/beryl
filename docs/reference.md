@@ -6,7 +6,7 @@ This document describes the public interface of the Beryl module.
 
 ### html
 
-`$html: schema, options \dashrightarrow html\_content$`
+$html: schema, options \dashrightarrow html$
 
 Generates complete HTML document reference representing the given schema.
 
@@ -19,7 +19,7 @@ html = await Beryl.html schema, tabular: false
 
 ### resolve
 
-`$resolve: schema, options \dashrightarrow resolved\_fragment$`
+$resolve: schema, options \dashrightarrow fragment$
 
 Generates a standalone resolved HTML fragment representing the given schema, suitable for embedding.
 
@@ -32,7 +32,7 @@ fragment = await Beryl.resolve schema
 
 ### markdown
 
-`$markdown: schema, options \dashrightarrow markdown\_content$`
+$markdown: schema, options \dashrightarrow markdown$
 
 Generates a Markdown document reference representing the given schema.
 
@@ -49,7 +49,7 @@ Represents a schema parser and formatter instance.
 
 ### constructor
 
-`$\text{new Schema}: source \to schema\_instance$`
+$\text{new Schema}: source \to schema$
 
 Creates a new Schema representation instance.
 
@@ -59,7 +59,7 @@ schema = new Schema source
 
 ### decode
 
-`$decode: \dashrightarrow \emptyset$`
+$decode: \dashrightarrow \emptyset$
 
 Dereferences and hoists the schema definitions.
 
@@ -69,7 +69,7 @@ await schema.decode()
 
 ### html
 
-`$html: options \dashrightarrow html\_content$`
+$html: options \dashrightarrow html$
 
 Generates a complete HTML reference.
 
@@ -79,7 +79,7 @@ html = await schema.html tabular: true
 
 ### resolve
 
-`$resolve: options \dashrightarrow resolved\_fragment$`
+$resolve: options \dashrightarrow fragment$
 
 Generates a resolved HTML fragment.
 
@@ -89,7 +89,7 @@ fragment = await schema.resolve()
 
 ### markdown
 
-`$markdown: options \dashrightarrow markdown\_content$`
+$markdown: options \dashrightarrow markdown$
 
 Generates a Markdown reference.
 

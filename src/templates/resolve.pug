@@ -2,14 +2,8 @@ include mixins/prose
 include mixins/tabular
 
 if options && !options.tabular
-  if sections && sections.length > 1
-    p.toc
-      for sec, index in sections.slice(1)
-        if index > 0
-          |  | 
-        a(href=`#${sec.id}`)= sec.heading
   for section in sections
-    +proseSection(section)
+    +proseSection(section, subschemas)
 else
   +tabular(tabular.root, "top-level")
   for sub in tabular.subschemas

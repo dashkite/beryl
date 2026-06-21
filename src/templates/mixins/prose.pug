@@ -1,6 +1,12 @@
-mixin proseSection(section)
+mixin proseSection(section, subschemas)
   if section.isRoot
     h1(id=section.id)= section.heading
+    if subschemas && subschemas.length > 0
+      p.toc
+        for sec, index in subschemas
+          if index > 0
+            |  | 
+          a(href=`#${sec.id}`)= sec.heading
   else
     h2(id=section.id)= section.heading
     

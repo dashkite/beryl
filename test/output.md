@@ -1,7 +1,7 @@
-[Action](#action) | [Action Variation 1](#action-variation-1) | [Action Variation 2](#action-variation-2) | [Action Variation 3](#action-variation-3) | [Grant Resources](#grant-resources) | [Grant Methods](#grant-methods) | [Grant Resolvers](#grant-resolvers) | [Grant Bindings](#grant-bindings) | [Resolver](#resolver) | [Grant](#grant) | [Grant Resources Include](#grant-resources-include) | [Grant Resources Exclude](#grant-resources-exclude) | [Grant Resources Items](#grant-resources-items) | [Grant Resources Include Items](#grant-resources-include-items) | [Grant Resources Exclude Items](#grant-resources-exclude-items) | [Grant Methods Items](#grant-methods-items) | [Grant Resolvers Items](#grant-resolvers-items) | [Rune Description Domain](#rune-description-domain) | [Expires](#expires) | [Rune Description Resolvers](#rune-description-resolvers) | [Rune Description Grants](#rune-description-grants)
-
 Rune Description
 ================
+
+[Action](#action) | [Action Variation 1](#action-variation-1) | [Action Variation 2](#action-variation-2) | [Action Variation 3](#action-variation-3) | [Grant Resources](#grant-resources) | [Grant Methods](#grant-methods) | [Grant Resolvers](#grant-resolvers) | [Grant Bindings](#grant-bindings) | [Resolver](#resolver) | [Grant](#grant) | [Grant Resources Include](#grant-resources-include) | [Grant Resources Exclude](#grant-resources-exclude) | [Grant Resources Items](#grant-resources-items) | [Grant Resources Include Items](#grant-resources-include-items) | [Grant Resources Exclude Items](#grant-resources-exclude-items) | [Grant Methods Items](#grant-methods-items) | [Grant Resolvers Items](#grant-resolvers-items) | [Rune Description Domain](#rune-description-domain) | [Expires](#expires) | [Rune Description Resolvers](#rune-description-resolvers) | [Rune Description Grants](#rune-description-grants)
 
 A rune description describes the authorization grants for a domain.
 

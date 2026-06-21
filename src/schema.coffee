@@ -69,6 +69,7 @@ class Schema
     await @decode()
     if !options.tabular
       sections = Prose.build @schema, @references
+      subschemas = sections[ 1.. ]
       
       title = if @schema.title?.value?
         "#{ @schema.title.value } — Schema Reference"
@@ -79,13 +80,13 @@ class Schema
         
       navigation = if sections[ 0 ]?
         sublist =
-          ( { href: "##{ sec.id }", text: sec.heading } for sec in sections[ 1.. ])
+          ( { href: "##{ sec.id }", text: sec.heading } for sec in subschemas )
         root: { href: "##{ sections[ 0 ].id }", text: sections[ 0 ].heading }
         subschemas: sublist
       else
         null
         
-      fullHtml { @schema, sections, options, title, navigation }
+      fullHtml { @schema, sections, subschemas, options, title, navigation }
     else
       tabular = Tabular.build @schema, @references
       
@@ -108,7 +109,8 @@ class Schema
     await @decode()
     if !options.tabular
       sections = Prose.build @schema, @references
-      resolveHtml { @schema, sections, options }
+      subschemas = sections[ 1.. ]
+      resolveHtml { @schema, sections, subschemas, options }
     else
       tabular = Tabular.build @schema, @references
       resolveHtml { @schema, tabular, options }

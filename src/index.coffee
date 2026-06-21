@@ -101,6 +101,14 @@ formatPropertyVal = ( name, property, refs ) ->
       formatTypeDirect property.value
     else if name == "pattern"
       "<code>#{property.value}</code>"
+    else if name == "required"
+      propNames = property.value.split ", "
+      links = []
+      for p in propNames
+        title = titleCase uncase p
+        slug = slugify title
+        links.push "<a href=\"##{slug}\">#{title}</a>"
+      links.join ", "
     else if name == "$ref" or property.value.startsWith? "#"
       getRefLink property.value, refs
     else

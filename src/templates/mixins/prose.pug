@@ -13,7 +13,7 @@ mixin schemaTable(iterable, refSchema)
 
   if iterable.patternProperties
     for patternSchema, pattern in iterable.patternProperties.value
-      - var label = `<code>${pattern}</code>`
+      - var label = `Properties matching <code>${pattern}</code>`
       - var value = formatPropertyVal(pattern, patternSchema, refs)
       if value !== ""
         - rows.push({ label: label, value: value })
@@ -27,7 +27,7 @@ mixin schemaTable(iterable, refSchema)
       tbody
         for row in rows
           tr
-            td: strong!= row.label
+            td!= row.label
             td!= row.value
 
 mixin schemaReferences(iterable)
@@ -48,9 +48,11 @@ mixin schemaReferences(iterable)
 
 mixin proseProperty(propName, prop, isPattern)
   if isPattern
-    h4: code= propName
+    h4(id=slugify(propName)): code= propName
   else
-    h4= getHeadingName(propName, prop.value)
+    - var heading = getHeadingName(propName, prop.value)
+    - var slug = slugify(heading)
+    h4(id=slug)= heading
 
   - var desc = prop.value.description ? prop.value.description.value : null
   if prop.Ctype == "object" && prop.value.$ref

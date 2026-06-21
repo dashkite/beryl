@@ -26,7 +26,13 @@ formatType = ( propSchema, refSchema ) ->
   else
     types = type.split ", "
     capitalized = ( titleCase t for t in types )
-    capitalized.join ", "
+    if capitalized.length == 1
+      capitalized[0]
+    else if capitalized.length == 2
+      capitalized.join " or "
+    else
+      last = capitalized.pop()
+      "#{capitalized.join ", "}, or #{last}"
 
 hoistNested = ( schema ) ->
   schema.$defs = schema.$defs || {}

@@ -60,7 +60,7 @@ Action
 
 #### Value
 
-**Type:** _String, Object, Array_. The operand for the action, if any.
+**Type:** _String, Object, or Array_. The operand for the action, if any.
 
 #### Action
 
@@ -71,7 +71,7 @@ See [Action](#/$defs/action).
 Grant Resources
 ---------------
 
-**Type:** _Object, Array_. A list of resources the grant applies to.
+**Type:** _Object or Array_. A list of resources the grant applies to.
 
 *   **maxProperties:** 1
 *   **additionalProperties:** false
@@ -176,7 +176,7 @@ resources, methods, bindings
 
 #### Resources
 
-**Type:** _Object, Array_. A list of resources the grant applies to.
+**Type:** _Object or Array_. A list of resources the grant applies to.
 
 See [Grant Resources](#/$defs/GrantResources).
 

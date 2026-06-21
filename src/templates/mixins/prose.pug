@@ -1,4 +1,4 @@
-mixin prose({ iterable, heading, id, isRoot, isArray })
+mixin prose({ iterable, heading, id, isRoot, isArray, isPatternProperties })
   if heading
     if isRoot
       h1(id=id)= heading
@@ -12,7 +12,12 @@ mixin prose({ iterable, heading, id, isRoot, isArray })
       if !heading || (propertyName !== "title" && propertyName !== "description" && propertyName !== "properties")
         li
           if !isArray
-            strong= propertyName + ": "
+            if isPatternProperties
+              strong
+                code= propertyName
+                | : 
+            else
+              strong= propertyName + ": "
           if propertyName == "$ref"
             - var refVal = property.value
             a(href=refVal)= getHeadingName(refVal, refs[refVal.slice(1)])
@@ -30,23 +35,51 @@ mixin prose({ iterable, heading, id, isRoot, isArray })
               - var refVal = property.value.$ref.value
               a(href=refVal)= getHeadingName(refVal, refs[refVal.slice(1)])
             else
-              +prose({ iterable: property.value })
+              +prose({ iterable: property.value, isPatternProperties: (propertyName == "patternProperties") })
           else if property.Ctype == "array"
             +prose({ iterable: property.value, isArray: true })
 
   if heading && iterable.properties
     h3 Properties
-    ul
-      for prop, propName in iterable.properties.value
-        li
-          strong= propName + ": "
-          if prop.Ctype == "object"
-            if prop.value.$ref
-              - var refVal = prop.value.$ref.value
-              a(href=refVal)= getHeadingName(refVal, refs[refVal.slice(1)])
-            else
-              +prose({ iterable: prop.value })
-          else if prop.Ctype == "array"
-            +prose({ iterable: prop.value, isArray: true })
-          else
-            = prop.value
+    for prop, propName in iterable.properties.value
+      h4= propName
+      if prop.Ctype == "object" && prop.value.$ref
+        - var refVal = prop.value.$ref.value
+        - var refSchema = refs[refVal.slice(1)]
+        - var desc = prop.value.description ? prop.value.description.value : (refSchema ? refSchema.description?.value : null)
+        if desc
+          p= desc
+        p
+          | See 
+          a(href=refVal)= getHeadingName(refVal, refSchema)
+          | .
+      else
+        if prop.value && prop.value.description
+          p= prop.value.description.value
+        ul
+          for value, key in prop.value
+            if key !== "title" && key !== "description"
+              li
+                if isPatternProperties
+                  strong
+                    code= key
+                    | : 
+                else
+                  strong= key + ": "
+                if value.Ctype == "string"
+                  if key == "pattern"
+                    code= value.value
+                  else
+                    = value.value
+                else if value.Ctype == "number"
+                  = value.value
+                else if value.Ctype == "boolean"
+                  = value.value
+                else if value.Ctype == "object"
+                  if value.value.$ref
+                    - var refVal = value.value.$ref.value
+                    a(href=refVal)= getHeadingName(refVal, refs[refVal.slice(1)])
+                  else
+                    +prose({ iterable: value.value, isPatternProperties: (key == "patternProperties") })
+                else if value.Ctype == "array"
+                  +prose({ iterable: value.value, isArray: true })

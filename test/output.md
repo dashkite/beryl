@@ -9,25 +9,39 @@ A rune description describes the authorization grants for a domain.
 
 ### Properties
 
-*   **domain:**
-    *   **description:** The domain the rune description is associated with.
-    *   **type:** string
-    *   **pattern:** `^([a-z0-9\-]+\.[a-z0-9\-]+){1,}\.[a-z]+$`
-*   **expires:** [Expires](#/$defs/expires)
-*   **identity:**
-    *   **description:** The identity the rune is associated with.
-    *   **type:** string
-*   **resolvers:**
-    *   **description:** A dictionary of resolvers.
-    *   **type:** object
-    *   **patternProperties:**
-        *   **^\[A-Za-z0-9\\-\]+$:** [Resolver](#/$defs/resolver)
-    *   **minProperties:** 1
-    *   **additionalProperties:** false
-*   **grants:**
-    *   **description:** An array of grants.
-    *   **type:** array
-    *   **items:** [Grant](#/$defs/grant)
+#### domain
+
+The domain the rune description is associated with.
+
+*   **type:** string
+*   **pattern:** `^([a-z0-9\-]+\.[a-z0-9\-]+){1,}\.[a-z]+$`
+
+#### expires
+
+See [Expires](#/$defs/expires).
+
+#### identity
+
+The identity the rune is associated with.
+
+*   **type:** string
+
+#### resolvers
+
+A dictionary of resolvers.
+
+*   **type:** object
+*   **patternProperties:**
+    *   **`^[A-Za-z0-9\-]+$`:** [Resolver](#/$defs/resolver)
+*   **minProperties:** 1
+*   **additionalProperties:** false
+
+#### grants
+
+An array of grants.
+
+*   **type:** array
+*   **items:** [Grant](#/$defs/grant)
 
 Action
 ------
@@ -42,13 +56,21 @@ A named policy action, whose operand may may be obtained either by specifying th
 
 ### Properties
 
-*   **name:**
-    *   **description:** The name of the rule action.
-    *   **type:** string
-*   **value:**
-    *   **description:** The operand for the action, if any.
-    *   **type:** string, object, array
-*   **action:** [Action](#/$defs/action)
+#### name
+
+The name of the rule action.
+
+*   **type:** string
+
+#### value
+
+The operand for the action, if any.
+
+*   **type:** string, object, array
+
+#### action
+
+See [Action](#/$defs/action).
 
 Expires
 -------
@@ -60,26 +82,45 @@ A duration object that represents when the rune expires.
 
 ### Properties
 
-*   **years:**
-    *   **type:** integer
-*   **months:**
-    *   **type:** integer
-*   **weeks:**
-    *   **type:** integer
-*   **days:**
-    *   **type:** integer
-*   **hours:**
-    *   **type:** integer
-*   **minutes:**
-    *   **type:** integer
-*   **seconds:**
-    *   **type:** integer
-*   **milliseconds:**
-    *   **type:** integer
-*   **microseconds:**
-    *   **type:** integer
-*   **nanoseconds:**
-    *   **type:** integer
+#### years
+
+*   **type:** integer
+
+#### months
+
+*   **type:** integer
+
+#### weeks
+
+*   **type:** integer
+
+#### days
+
+*   **type:** integer
+
+#### hours
+
+*   **type:** integer
+
+#### minutes
+
+*   **type:** integer
+
+#### seconds
+
+*   **type:** integer
+
+#### milliseconds
+
+*   **type:** integer
+
+#### microseconds
+
+*   **type:** integer
+
+#### nanoseconds
+
+*   **type:** integer
 
 Resolver
 --------
@@ -91,7 +132,9 @@ A resolver consists of an action.
 
 ### Properties
 
-*   **action:** [Action](#/$defs/action)
+#### action
+
+See [Action](#/$defs/action).
 
 Grant
 -----
@@ -103,42 +146,53 @@ A grant consists of a list of resources, methods, resolvers, and bindings. It de
 
 ### Properties
 
-*   **resources:**
-    *   **description:** A list of resources the grant applies to.
-    *   **type:** object, array
-    *   **properties:**
-        *   **include:**
-            *   **type:** array
-            *   **items:**
-                *   **type:** string
-                *   **pattern:** `^(([A-Za-z0-9\-])([ ]{0,1}))+$`
-        *   **exclude:**
-            *   **type:** array
-            *   **items:**
-                *   **type:** string
-                *   **pattern:** `^(([A-Za-z0-9\-])([ ]{0,1}))+$`
-    *   **maxProperties:** 1
-    *   **additionalProperties:** false
-    *   **items:**
-        *   **type:** string
-        *   **pattern:** `^(([A-Za-z0-9\-])([ ]{0,1}))+$`
-*   **methods:**
-    *   **description:** A list of methods the grant applies to.
-    *   **type:** array
-    *   **items:**
-        *   **type:** string
-        *   **pattern:** `^[Gg][Ee][Tt]$|^[Pp][Oo][Ss][Tt]$|^[Pp][Uu][Tt]$|^[Dd][Ee][Ll][Ee][Tt][Ee]$`
-*   **resolvers:**
-    *   **description:** A list of resolvers the grant relies on.
-    *   **type:** array
-    *   **items:**
-        *   **type:** string
-        *   **pattern:** `^[A-Za-z0-9\-]+$`
-*   **bindings:**
-    *   **description:** A dictionary of bindings the grant applies to.
-    *   **type:** object
-    *   **patternProperties:**
-        *   **^\[A-Za-z0-9\_\]+$:**
+#### resources
+
+A list of resources the grant applies to.
+
+*   **type:** object, array
+*   **properties:**
+    *   **include:**
+        *   **type:** array
+        *   **items:**
             *   **type:** string
-    *   **minProperties:** 1
-    *   **additionalProperties:** false
+            *   **pattern:** `^(([A-Za-z0-9\-])([ ]{0,1}))+$`
+    *   **exclude:**
+        *   **type:** array
+        *   **items:**
+            *   **type:** string
+            *   **pattern:** `^(([A-Za-z0-9\-])([ ]{0,1}))+$`
+*   **maxProperties:** 1
+*   **additionalProperties:** false
+*   **items:**
+    *   **type:** string
+    *   **pattern:** `^(([A-Za-z0-9\-])([ ]{0,1}))+$`
+
+#### methods
+
+A list of methods the grant applies to.
+
+*   **type:** array
+*   **items:**
+    *   **type:** string
+    *   **pattern:** `^[Gg][Ee][Tt]$|^[Pp][Oo][Ss][Tt]$|^[Pp][Uu][Tt]$|^[Dd][Ee][Ll][Ee][Tt][Ee]$`
+
+#### resolvers
+
+A list of resolvers the grant relies on.
+
+*   **type:** array
+*   **items:**
+    *   **type:** string
+    *   **pattern:** `^[A-Za-z0-9\-]+$`
+
+#### bindings
+
+A dictionary of bindings the grant applies to.
+
+*   **type:** object
+*   **patternProperties:**
+    *   **`^[A-Za-z0-9_]+$`:**
+        *   **type:** string
+*   **minProperties:** 1
+*   **additionalProperties:** false

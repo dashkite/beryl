@@ -1,0 +1,26 @@
+mixin prose({ iterable, heading, id, isRoot, isArray })
+  if heading
+    if isRoot
+      h1(id=id)= heading
+    else
+      h2(id=id)= heading
+    if iterable.description
+      p= iterable.description.value
+  ul
+    for property, propertyName in iterable
+      if !heading || (propertyName !== "title" && propertyName !== "description")
+        li
+          if !isArray
+            strong= propertyName + ": "
+          if propertyName == "$ref"
+            a(href=property.value) Go to Reference
+          else if property.Ctype == "string"
+            = property.value
+          else if property.Ctype == "number"
+            = property.value
+          else if property.Ctype == "boolean"
+            = property.value
+          else if property.Ctype == "object"
+            +prose({ iterable: property.value })
+          else if property.Ctype == "array"
+            +prose({ iterable: property.value, isArray: true })

@@ -1,0 +1,37 @@
+mixin title(title = "DashKite")
+  title= title
+  meta( key = "og:title" property = "og:title" content = title )
+  meta( key = "twitter:title" name = "twitter:title" content = title )
+
+mixin description(description)
+  if description
+    meta( key = "description" name = "description" content = description )
+    meta(
+      key = "og:description"
+      property = "og:description"
+      content = description
+    )
+    meta(
+      key = "twitter:description"
+      name = "twitter:description"
+      content = description
+    )
+
+mixin url(url)
+  if url
+    link( key = "url" rel = "canonical" href = url )
+    meta( key = "og:url" property = "og:url" content = url )
+
+mixin image(image)
+  if image
+    meta( key = "og:image" property = "og:image" content = image )
+    meta(
+      key = "twitter:card"
+      name = "twitter:card"
+      content = "summary_large_image"
+    )
+    meta(
+      key = "twitter:image"
+      name = "twitter:image"
+      content = image
+    )

@@ -25,9 +25,9 @@
     "#templates/*": "./build/browser/src/templates/*.js"
   },
   "devDependencies": {
-    "@dashkite/amen": "^0.1.2",
-    "@dashkite/amen-console": "^0.8.25",
-    "@dashkite/assert": "^0.1.4",
+    "@dashkite/amen": "^0.9.36",
+    "@dashkite/amen-console": "^0.8.26",
+    "@dashkite/assert": "^0.7.31",
     "@dashkite/genie": "^0.20.26",
     "@dashkite/genie-clean": "^0.13.25",
     "@dashkite/genie-coffee": "^0.13.28",
@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.1.2",
-    "@dashkite/joy": "^0.3.16"
+    "@dashkite/joy": "^0.3.16",
+    "turndown": "^7.1.2"
   }
 }

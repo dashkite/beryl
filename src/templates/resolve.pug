@@ -1,5 +1,11 @@
-include mixins
+include mixins/prose
+include mixins/tabular
 
-+resolve({ iterable: schema, id: "top-level" })
-for ref, key in refs
-  +resolve({ iterable: ref.value, id: key })
+if options && !options.tabular
+  +prose({ iterable: schema, heading: getHeadingName("top-level", schema), id: "top-level", isRoot: true })
+  for ref, key in refs
+    +prose({ iterable: ref.value, heading: getHeadingName(key, ref.value), id: key })
+else
+  +tabular({ iterable: schema, id: "top-level" })
+  for ref, key in refs
+    +tabular({ iterable: ref.value, id: key })

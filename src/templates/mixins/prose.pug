@@ -1,111 +1,61 @@
-mixin prose({ iterable, heading, id, isRoot, isArray, isPatternProperties })
+mixin schemaTable(iterable, refSchema)
+  - var rows = []
+  for property, propertyName in iterable
+    if propertyName !== "title" && propertyName !== "description" && propertyName !== "properties" && propertyName !== "patternProperties"
+      - var label = getPropertyLabel(propertyName)
+      - var value = formatPropertyVal(propertyName, property, refs)
+      if value !== ""
+        - rows.push({ label: label, value: value })
+
+  if rows.length > 0
+    table
+      thead
+        tr
+          th Property
+          th Value
+      tbody
+        for row in rows
+          tr
+            td= row.label
+            td!= row.value
+
+mixin proseProperty(propName, prop, isPattern)
+  if isPattern
+    h4: code= propName
+  else
+    h4= getHeadingName(propName, prop.value)
+
+  if prop.Ctype == "object" && prop.value.$ref
+    - var refVal = prop.value.$ref.value
+    - var refObj = refs[refVal.slice(1)]
+    - var refSchema = refObj ? refObj.value : null
+    - var desc = prop.value.description ? prop.value.description.value : (refSchema ? refSchema.description?.value : null)
+    if desc
+      p= desc
+    +schemaTable(prop.value, refSchema)
+  else
+    - var desc = prop.value.description ? prop.value.description.value : null
+    if desc
+      p= desc
+    +schemaTable(prop.value, null)
+
+mixin prose({ iterable, heading, id, isRoot })
   if heading
     if isRoot
       h1(id=id)= heading
     else
       h2(id=id)= heading
-    - var typeStr = formatType(iterable, null)
-    p
-      strong Type: 
-      em= typeStr
-      | . 
-      if iterable.description
-        = iterable.description.value
+    if iterable.description
+      p= iterable.description.value
 
-  ul
-    for property, propertyName in iterable
-      if !heading || (propertyName !== "title" && propertyName !== "description" && propertyName !== "properties" && propertyName !== "type" && propertyName !== "required")
-        li
-          if !isArray
-            if isPatternProperties
-              strong
-                code= propertyName
-                | : 
-            else
-              strong= propertyName + ": "
-          if propertyName == "$ref"
-            - var refObj = refs[property.value.slice(1)]
-            - var refSchema = refObj ? refObj.value : null
-            a(href=property.value)= getHeadingName(property.value, refSchema)
-          else if property.Ctype == "string"
-            if propertyName == "pattern"
-              code= property.value
-            else
-              = property.value
-          else if property.Ctype == "number"
-            = property.value
-          else if property.Ctype == "boolean"
-            = property.value
-          else if property.Ctype == "object"
-            if property.value.$ref
-              - var refVal = property.value.$ref.value
-              - var refObj = refs[refVal.slice(1)]
-              - var refSchema = refObj ? refObj.value : null
-              a(href=refVal)= getHeadingName(refVal, refSchema)
-            else
-              +prose({ iterable: property.value, isPatternProperties: (propertyName == "patternProperties") })
-          else if property.Ctype == "array"
-            +prose({ iterable: property.value, isArray: true })
-
-  if heading && iterable.required
-    h3 Required Properties
-    p= iterable.required.value
+  +schemaTable(iterable, null)
 
   if heading && iterable.properties
     h3 Properties
     for prop, propName in iterable.properties.value
-      h4= getHeadingName(propName, prop.value)
-      if prop.Ctype == "object" && prop.value.$ref
-        - var refVal = prop.value.$ref.value
-        - var refObj = refs[refVal.slice(1)]
-        - var refSchema = refObj ? refObj.value : null
-        - var typeStr = formatType(prop.value, refSchema)
-        - var desc = prop.value.description ? prop.value.description.value : (refSchema ? refSchema.description?.value : null)
-        p
-          strong Type: 
-          em= typeStr
-          | . 
-          if desc
-            = desc
-        p
-          | See 
-          a(href=refVal)= getHeadingName(refVal, refSchema)
-          | .
-      else
-        - var typeStr = formatType(prop.value, null)
-        - var desc = prop.value.description ? prop.value.description.value : null
-        p
-          strong Type: 
-          em= typeStr
-          | . 
-          if desc
-            = desc
-        ul
-          for value, key in prop.value
-            if key !== "title" && key !== "description" && key !== "type"
-              li
-                if isPatternProperties
-                  strong
-                    code= key
-                    | : 
-                else
-                  strong= key + ": "
-                if value.Ctype == "string"
-                  if key == "pattern"
-                    code= value.value
-                  else
-                    = value.value
-                else if value.Ctype == "number"
-                  = value.value
-                else if value.Ctype == "boolean"
-                  = value.value
-                else if value.Ctype == "object"
-                  if value.value.$ref
-                    - var refVal = value.value.$ref.value
-                    - var refObj = refs[refVal.slice(1)]
-                    - var refSchema = refObj ? refObj.value : null
-                    a(href=refVal)= getHeadingName(refVal, refSchema)
-                  else
-                    +prose({ iterable: value.value, isPatternProperties: (key == "patternProperties") })
-                else if value.Ctype == "array"
-                  +prose({ iterable: value.value, isArray: true })
+      +proseProperty(propName, prop, false)
+
+  if heading && iterable.patternProperties
+    h3 Pattern Properties
+    for prop, propName in iterable.patternProperties.value
+      +proseProperty(propName, prop, true)

@@ -19,12 +19,11 @@ getHeadingName = ( key, refSchema ) ->
     lastName = parts[parts.length - 1]
     titleCase uncase lastName
 
-formatType = ( propSchema, refSchema ) ->
-  type = propSchema.type?.value || refSchema?.type?.value
-  if !type
+formatTypeDirect = ( typeVal ) ->
+  if !typeVal
     "Object"
   else
-    types = type.split ", "
+    types = typeVal.split ", "
     capitalized = ( titleCase t for t in types )
     if capitalized.length == 1
       capitalized[0]
@@ -34,6 +33,108 @@ formatType = ( propSchema, refSchema ) ->
       last = capitalized.pop()
       "#{capitalized.join ", "}, or #{last}"
 
+formatType = ( propSchema, refSchema ) ->
+  type = propSchema.type?.value || refSchema?.type?.value
+  formatTypeDirect type
+
+getPropertyLabel = ( name ) ->
+  switch name
+    when "type" then "Type"
+    when "required" then "Required Properties"
+    when "additionalProperties" then "Additional Properties"
+    when "minProperties" then "Min Properties"
+    when "maxProperties" then "Max Properties"
+    when "pattern" then "Pattern"
+    when "patternProperties" then "Pattern Properties"
+    when "anyOf" then "Any Of"
+    when "allOf" then "All Of"
+    when "oneOf" then "One Of"
+    when "$ref" then "Reference"
+    else titleCase uncase name
+
+formatSubschema = ( obj, refs ) ->
+  keys = ( k for k, v of obj when k not in [
+    "title", "description", "properties", "patternProperties"
+  ] )
+  if keys.length == 1 && keys[0] == "$ref"
+    return formatPropertyVal "$ref", obj.$ref, refs
+    
+  parts = []
+  for key in keys
+    formattedVal = formatPropertyVal key, obj[key], refs
+    if formattedVal
+      parts.push "#{getPropertyLabel key}: #{formattedVal}"
+  parts.join "; "
+
+formatCombinator = ( name, arrayVal, refs ) ->
+  prefix = switch name
+    when "anyOf" then "Must match at least one of:"
+    when "allOf" then "Must match all of:"
+    when "oneOf" then "Must match exactly one of:"
+    else "Must match:"
+    
+  options = []
+  for item in arrayVal
+    options.push formatSubschema item.value, refs
+  
+  result = prefix
+  for opt in options
+    result += "<br>• #{opt}"
+  result
+
+formatPropertyVal = ( name, property, refs ) ->
+  if !property?
+    return ""
+    
+  if property.Ctype == "string"
+    if name == "type"
+      formatTypeDirect property.value
+    else if name == "pattern"
+      "<code>#{property.value}</code>"
+    else if name == "$ref" or property.value.startsWith? "#"
+      refVal = property.value
+      refObj = refs[refVal.slice 1]
+      rSchema = refObj?.value
+      "<a href=\"#{refVal}\">#{getHeadingName refVal, rSchema}</a>"
+    else
+      property.value
+      
+  else if property.Ctype == "number" or property.Ctype == "boolean"
+    String property.value
+    
+  else if property.Ctype == "object"
+    if property.value.$ref
+      refVal = property.value.$ref.value
+      refObj = refs[refVal.slice 1]
+      rSchema = refObj?.value
+      "<a href=\"#{refVal}\">#{getHeadingName refVal, rSchema}</a>"
+    else
+      formatSubschema property.value, refs
+      
+  else if property.Ctype == "array"
+    if name in [ "anyOf", "allOf", "oneOf" ]
+      formatCombinator name, property.value, refs
+    else
+      options = []
+      for item in property.value
+        if item.Ctype == "object"
+          if item.value.$ref
+            refVal = item.value.$ref.value
+            refObj = refs[refVal.slice 1]
+            rSchema = refObj?.value
+            options.push "<a href=\"#{refVal}\">#{
+              getHeadingName refVal, rSchema
+            }</a>"
+          else
+            options.push formatSubschema item.value, refs
+        else if item.Ctype == "string"
+          options.push item.value
+        else
+          options.push String item.value
+      options.join ", "
+  else
+    ""
+
 hoistNested = ( schema ) ->
   schema.$defs = schema.$defs || {}
   
@@ -42,7 +143,7 @@ hoistNested = ( schema ) ->
       if obj.properties?
         for propName, prop of obj.properties
           if isObject prop
-            if prop.properties?
+            if prop.properties? || prop.patternProperties?
               hoistedName = ( titleCase name ) + ( titleCase propName )
               schema.$defs[hoistedName] = prop
               if !prop.title?
@@ -118,17 +219,58 @@ class Schema
 
   html: ( options = { tabular: true } ) ->
     await @decode()
-    fullHtml { @schema, @refs, options, getHeadingName, formatType }
+    fullHtml {
+      @schema
+      @refs
+      options
+      getHeadingName
+      formatType
+      getPropertyLabel
+      formatCombinator
+      formatPropertyVal
+    }
 
   resolve: ( options = { tabular: true } ) ->
     await @decode()
-    resolveHtml { @schema, @refs, options, getHeadingName, formatType }
+    resolveHtml {
+      @schema
+      @refs
+      options
+      getHeadingName
+      formatType
+      getPropertyLabel
+      formatCombinator
+      formatPropertyVal
+    }
 
   markdown: ( options = {} ) ->
     opts = Object.assign { tabular: false }, options
     htmlContent = await @html opts
     turndown = new TurndownService emDelimiter: "_"
     turndown.remove [ "title", "nav" ]
+    turndown.addRule 'table',
+      filter: 'table'
+      replacement: ( content, node ) ->
+        rows = Array.from node.querySelectorAll 'tr'
+        mdRows = []
+        for row in rows
+          cells = Array.from row.querySelectorAll 'th, td'
+          mdCells = []
+          for cell in cells
+            html = cell.innerHTML.replace /<br\s*\/?>/gi, '^^BR^^'
+            text = turndown.turndown( html ).trim()
+            text = text.replace /\^\^BR\^\^/g, '<br>'
+            text = text.replace /\|/g, '\\|'
+            text = text.replace /\r?\n/g, ' '
+            mdCells.push text
+          mdRows.push "| " + mdCells.join( " | " ) + " |"
+        if mdRows.length > 0
+          headerRow = mdRows[0]
+          cellsCount = Array.from( rows[0].querySelectorAll 'th, td' ).length
+          separatorCells = ( "---" for i in [1..cellsCount] )
+          separatorRow = "| " + separatorCells.join( " | " ) + " |"
+          mdRows.splice 1, 0, separatorRow
+        "\n\n" + mdRows.join( "\n" ) + "\n\n"
     turndown.turndown htmlContent
 
 html = ( schema, options ) ->

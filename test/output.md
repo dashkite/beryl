@@ -153,7 +153,14 @@ A dictionary of bindings the grant applies to.
 | Type | Object |
 | Min Properties | 1 |
 | Additional Properties | false |
-| Properties matching `^[A-Za-z0-9_]+$` | Type: String |
+
+### Properties
+
+#### Properties matching `^[A-Za-z0-9_]+$`
+
+| Name | Value |
+| --- | --- |
+| Type | String |
 
 Resolver
 --------
@@ -359,7 +366,14 @@ A dictionary of resolvers.
 | Type | Object |
 | Min Properties | 1 |
 | Additional Properties | false |
-| Properties matching `^[A-Za-z0-9\-]+$` | [Resolver](#resolver) |
+
+### Properties
+
+#### Properties matching `^[A-Za-z0-9\-]+$`
+
+A resolver consists of an action.
+
+See: [Resolver](#resolver)
 
 Rune Description Grants
 -----------------------

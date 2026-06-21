@@ -11,13 +11,6 @@ mixin schemaTable(iterable, refSchema)
       if value !== ""
         - rows.push({ label: label, value: value })
 
-  if iterable.patternProperties
-    for patternSchema, pattern in iterable.patternProperties.value
-      - var label = `Properties matching <code>${pattern}</code>`
-      - var value = formatPropertyVal(pattern, patternSchema, refs)
-      if value !== ""
-        - rows.push({ label: label, value: value })
-
   if rows.length > 0
     table
       thead
@@ -48,7 +41,11 @@ mixin schemaReferences(iterable)
 
 mixin proseProperty(propName, prop, isPattern)
   if isPattern
-    h4(id=slugify(propName)): code= propName
+    - var label = "Properties matching " + propName
+    - var slug = slugify(label)
+    h4(id=slug)
+      | Properties matching 
+      code= propName
   else
     - var heading = getHeadingName(propName, prop.value)
     - var slug = slugify(heading)
@@ -81,7 +78,11 @@ mixin prose({ iterable, heading, id, isRoot })
   +schemaTable(iterable, null)
   +schemaReferences(iterable)
 
-  if heading && iterable.properties
+  if heading && (iterable.properties || iterable.patternProperties)
     h3 Properties
-    for prop, propName in iterable.properties.value
-      +proseProperty(propName, prop, false)
+    if iterable.properties
+      for prop, propName in iterable.properties.value
+        +proseProperty(propName, prop, false)
+    if iterable.patternProperties
+      for prop, propName in iterable.patternProperties.value
+        +proseProperty(propName, prop, true)

@@ -6,21 +6,47 @@ mixin prose({ iterable, heading, id, isRoot, isArray })
       h2(id=id)= heading
     if iterable.description
       p= iterable.description.value
+
   ul
     for property, propertyName in iterable
-      if !heading || (propertyName !== "title" && propertyName !== "description")
+      if !heading || (propertyName !== "title" && propertyName !== "description" && propertyName !== "properties")
         li
           if !isArray
             strong= propertyName + ": "
           if propertyName == "$ref"
-            a(href=property.value) Go to Reference
+            - var refVal = property.value
+            a(href=refVal)= getHeadingName(refVal, refs[refVal.slice(1)])
           else if property.Ctype == "string"
-            = property.value
+            if propertyName == "pattern"
+              code= property.value
+            else
+              = property.value
           else if property.Ctype == "number"
             = property.value
           else if property.Ctype == "boolean"
             = property.value
           else if property.Ctype == "object"
-            +prose({ iterable: property.value })
+            if property.value.$ref
+              - var refVal = property.value.$ref.value
+              a(href=refVal)= getHeadingName(refVal, refs[refVal.slice(1)])
+            else
+              +prose({ iterable: property.value })
           else if property.Ctype == "array"
             +prose({ iterable: property.value, isArray: true })
+
+  if heading && iterable.properties
+    h3 Properties
+    ul
+      for prop, propName in iterable.properties.value
+        li
+          strong= propName + ": "
+          if prop.Ctype == "object"
+            if prop.value.$ref
+              - var refVal = prop.value.$ref.value
+              a(href=refVal)= getHeadingName(refVal, refs[refVal.slice(1)])
+            else
+              +prose({ iterable: prop.value })
+          else if prop.Ctype == "array"
+            +prose({ iterable: prop.value, isArray: true })
+          else
+            = prop.value

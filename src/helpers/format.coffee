@@ -20,7 +20,7 @@ getHeadingName = ( key, referenceSchema ) ->
   if referenceSchema?.title?.value?
     referenceSchema.title.value
   else
-    parts = key.split( "/" )
+    parts = ( key.split "/" )
     lastName = parts[ parts.length - 1 ]
     ( titleCase ( uncase lastName ))
 
@@ -41,15 +41,15 @@ Format =
     if !typeValue
       "Object"
     else
-      types = typeValue.split( ", " )
+      types = ( typeValue.split ", " )
       capitalized = ( titleCase t for t in types )
       if capitalized.length == 1
         capitalized[ 0 ]
       else if capitalized.length == 2
-        capitalized.join( " or " )
+        ( capitalized.join " or " )
       else
-        last = capitalized.pop()
-        "#{ capitalized.join( ", " ) }, or #{ last }"
+        last = ( capitalized.pop() )
+        "#{ ( capitalized.join ", " ) }, or #{ last }"
 
   type: ( propertySchema, referenceSchema ) ->
     type = propertySchema.type?.value || referenceSchema?.type?.value
@@ -67,21 +67,21 @@ Format =
       for key in keys
         formattedValue = ( Format.property key, object[ key ], references )
         if formattedValue
-          parts.push "#{ Format.label key }: #{ formattedValue }"
-      parts.join( "; " )
+          ( parts.push "#{ Format.label key }: #{ formattedValue }" )
+      ( parts.join "; " )
 
   combinator: ( name, arrayValue, references ) ->
     conjunction = if name == "allOf" then "and" else "or"
     options = []
     for item in arrayValue
-      options.push( Format.subschema item.value, references )
+      ( options.push ( Format.subschema item.value, references ))
     if options.length == 1
       options[ 0 ]
     else if options.length == 2
-      options.join( " #{ conjunction } " )
+      ( options.join " #{ conjunction } " )
     else
-      last = options.pop()
-      "#{ options.join( ", " ) }, #{ conjunction } #{ last }"
+      last = ( options.pop() )
+      "#{ ( options.join ", " ) }, #{ conjunction } #{ last }"
 
   property: ( name, property, references ) ->
     if !property?
@@ -93,20 +93,20 @@ Format =
         else if name == "pattern"
           "<code>#{ property.value }</code>"
         else if name == "required"
-          propertyNames = property.value.split( ", " )
+          propertyNames = ( property.value.split ", " )
           links = []
           for propertyName in propertyNames
             title = ( titleCase ( uncase propertyName ))
             slug = ( Format.identifier title )
-            links.push( "<a href=\"##{ slug }\">#{ title }</a>" )
-          links.join( ", " )
+            ( links.push "<a href=\"##{ slug }\">#{ title }</a>" )
+          ( links.join ", " )
         else if name == "$ref" || ( startsWith "#", property.value )
           ( Format.reference property.value, references )
         else
           property.value
           
       else if property.Ctype == "number" || property.Ctype == "boolean"
-        String property.value
+        ( String property.value )
         
       else if property.Ctype == "object"
         if property.value.$ref
@@ -122,14 +122,14 @@ Format =
           for item in property.value
             if item.Ctype == "object"
               if item.value.$ref
-                options.push( Format.reference item.value.$ref.value, references )
+                ( options.push ( Format.reference item.value.$ref.value, references ))
               else
-                options.push( Format.subschema item.value, references )
+                ( options.push ( Format.subschema item.value, references ))
             else if item.Ctype == "string"
-              options.push item.value
+              ( options.push item.value )
             else
-              options.push( String item.value )
-          options.join( ", " )
+              ( options.push ( String item.value ))
+          ( options.join ", " )
       else
         ""
 

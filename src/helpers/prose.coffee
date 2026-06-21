@@ -20,10 +20,10 @@ buildProperty = ( propertyName, property, isPattern, references ) ->
         if subPropertyName == "$ref"
           continue
         
-        label = Format.label subPropertyName
+        label = ( Format.label subPropertyName )
         value = ( Format.property subPropertyName, subProperty, references )
         if value != ""
-          tableRows.push { label, value }
+          ( tableRows.push { label, value } )
           
   referenceList = []
   if property.Ctype == "object" && property.value.$ref?
@@ -31,7 +31,7 @@ buildProperty = ( propertyName, property, isPattern, references ) ->
     headingName =
       ( Format.heading referenceValue,
         references[ referenceValue[ 1.. ]]?.value )
-    referenceList.push { href: "##{ Format.identifier headingName }", text: headingName }
+    ( referenceList.push { href: "##{ Format.identifier headingName }", text: headingName } )
     
   if property.value.items? && property.value.items.Ctype == "object" &&
   property.value.items.value.$ref?
@@ -39,7 +39,7 @@ buildProperty = ( propertyName, property, isPattern, references ) ->
     headingName =
       ( Format.heading referenceValue,
         references[ referenceValue[ 1.. ]]?.value )
-    referenceList.push { href: "##{ Format.identifier headingName }", text: headingName }
+    ( referenceList.push { href: "##{ Format.identifier headingName }", text: headingName } )
 
   if isPattern
     heading = propertyName
@@ -73,10 +73,10 @@ buildSection = ( key, iterable, isRoot, references ) ->
       if propertyName == "$ref"
         continue
       
-      label = Format.label propertyName
+      label = ( Format.label propertyName )
       value = ( Format.property propertyName, property, references )
       if value != ""
-        tableRows.push { label, value }
+        ( tableRows.push { label, value } )
         
   referenceList = []
   if iterable.$ref?
@@ -84,7 +84,7 @@ buildSection = ( key, iterable, isRoot, references ) ->
     headingName =
       ( Format.heading referenceValue,
         references[ referenceValue[ 1.. ]]?.value )
-    referenceList.push { href: "##{ Format.identifier headingName }", text: headingName }
+    ( referenceList.push { href: "##{ Format.identifier headingName }", text: headingName } )
     
   if iterable.items? && iterable.items.Ctype == "object" &&
   iterable.items.value.$ref?
@@ -92,20 +92,16 @@ buildSection = ( key, iterable, isRoot, references ) ->
     headingName =
       ( Format.heading referenceValue,
         references[ referenceValue[ 1.. ]]?.value )
-    referenceList.push { href: "##{ Format.identifier headingName }", text: headingName }
+    ( referenceList.push { href: "##{ Format.identifier headingName }", text: headingName } )
 
   properties = []
   if iterable.properties?
     for propertyName, property of iterable.properties.value
-      properties.push(
-        ( buildProperty propertyName, property, false, references )
-      )
+      ( properties.push ( buildProperty propertyName, property, false, references ))
       
   if iterable.patternProperties?
     for pattern, patternSchema of iterable.patternProperties.value
-      properties.push(
-        ( buildProperty pattern, patternSchema, true, references )
-      )
+      ( properties.push ( buildProperty pattern, patternSchema, true, references ))
       
   id: id
   heading: heading
@@ -117,9 +113,9 @@ buildSection = ( key, iterable, isRoot, references ) ->
 
 build = ( schema, references ) ->
   sections = []
-  sections.push( ( buildSection "top-level", schema, true, references ))
+  ( sections.push ( buildSection "top-level", schema, true, references ))
   for key, reference of references
-    sections.push( ( buildSection key, reference.value, false, references ))
+    ( sections.push ( buildSection key, reference.value, false, references ))
   sections
 
 Prose = {

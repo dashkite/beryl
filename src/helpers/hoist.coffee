@@ -12,27 +12,27 @@ check = ( object ) ->
     false
 
 parseHoistedName = ( hoistedName ) ->
-  match = hoistedName.match /(.*)(Item\d+|Items|Variation\d+)$/
+  match = ( hoistedName.match /(.*)(Item\d+|Items|Variation\d+)$/ )
   
   if match
     prefix = match[ 1 ]
     suffix = match[ 2 ]
-    formattedSuffix = suffix.replace /(\d+)/, " $1"
-    prefixWords = prefix.match( /[A-Z][a-z0-9]*/g ) || []
+    formattedSuffix = ( suffix.replace /(\d+)/, " $1" )
+    prefixWords = ( prefix.match /[A-Z][a-z0-9]*/g ) || []
     
     if prefixWords.length > 0
       baseWord = prefixWords[ prefixWords.length - 1 ]
       parentWords = prefixWords[ 0..( prefixWords.length - 2 ) ]
       baseTitle = "#{ baseWord } #{ formattedSuffix }"
       parentTitle = if parentWords.length > 0
-        ( titleCase ( uncase parentWords.join " " ))
+        ( titleCase ( uncase ( parentWords.join " " )))
       else
         ""
     else
       baseTitle = formattedSuffix
       parentTitle = ""
   else
-    words = hoistedName.match( /[A-Z][a-z0-9]*/g ) || [ hoistedName ]
+    words = ( hoistedName.match /[A-Z][a-z0-9]*/g ) || [ hoistedName ]
     len = words.length
     if len >= 2
       baseWords = [ words[ len - 1 ] ]
@@ -41,9 +41,9 @@ parseHoistedName = ( hoistedName ) ->
       baseWords = words
       parentWords = []
       
-    baseTitle = ( titleCase ( uncase baseWords.join " " ))
+    baseTitle = ( titleCase ( uncase ( baseWords.join " " )))
     parentTitle = if parentWords.length > 0
-      ( titleCase ( uncase parentWords.join " " ))
+      ( titleCase ( uncase ( parentWords.join " " )))
     else
       ""
       
@@ -68,14 +68,14 @@ nested = ( schema ) ->
               referenceObject.description = property.description
             object.properties[ propertyName ] = referenceObject
             
-            traverse hoistedName, property
+            ( traverse hoistedName, property )
           else
-            traverse propertyName, property
+            ( traverse propertyName, property )
             
       if object.patternProperties?
         for pattern, patternSchema of object.patternProperties
           if ( check patternSchema )
-            cleanPattern = pattern.replace( /[^A-Za-z0-9]/g, "" )
+            cleanPattern = ( pattern.replace /[^A-Za-z0-9]/g, "" )
             hoistedName = ( titleCase name ) + ( titleCase cleanPattern )
             schema.$defs[ hoistedName ] = patternSchema
             if !patternSchema.title?
@@ -86,9 +86,9 @@ nested = ( schema ) ->
               referenceObject.description = patternSchema.description
             object.patternProperties[ pattern ] = referenceObject
             
-            traverse hoistedName, patternSchema
+            ( traverse hoistedName, patternSchema )
           else
-            traverse "#{ name }Pattern", patternSchema
+            ( traverse "#{ name }Pattern", patternSchema )
  
       if object.items?
         if isArray object.items
@@ -102,9 +102,9 @@ nested = ( schema ) ->
               if item.description?
                 referenceObject.description = item.description
               object.items[ index ] = referenceObject
-              traverse hoistedName, item
+              ( traverse hoistedName, item )
             else
-              traverse "#{ name }Item#{ index + 1 }", item
+              ( traverse "#{ name }Item#{ index + 1 }", item )
         else if isObject object.items
           if ( check object.items )
             hoistedName = ( titleCase name ) + "Items"
@@ -115,9 +115,9 @@ nested = ( schema ) ->
             if object.items.description?
               referenceObject.description = object.items.description
             object.items = referenceObject
-            traverse hoistedName, schema.$defs[ hoistedName ]
+            ( traverse hoistedName, schema.$defs[ hoistedName ] )
           else
-            traverse "#{ name }Items", object.items
+            ( traverse "#{ name }Items", object.items )
  
       for key in [ "anyOf", "allOf", "oneOf" ]
         if object[ key ]? && isArray object[ key ]
@@ -131,20 +131,20 @@ nested = ( schema ) ->
               if item.description?
                 referenceObject.description = item.description
               object[ key ][ index ] = referenceObject
-              traverse hoistedName, item
+              ( traverse hoistedName, item )
             else
-              traverse "#{ name }Variation#{ index + 1 }", item
+              ( traverse "#{ name }Variation#{ index + 1 }", item )
  
       if object.$defs?
         for definitionName, definition of object.$defs
-          traverse definitionName, definition
+          ( traverse definitionName, definition )
  
   rootName = if schema.title?
     ( titleCase ( uncase schema.title ))
   else
     "Root"
-  rootName = rootName.replace( /\s+/g, "" )
-  traverse rootName, schema
+  rootName = ( rootName.replace /\s+/g, "" )
+  ( traverse rootName, schema )
  
   frequencies = {}
   for definitionName, definition of schema.$defs

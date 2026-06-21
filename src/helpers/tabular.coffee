@@ -2,7 +2,7 @@ buildViewModel = ( iterable, isArray = false ) ->
   rows = []
   for key, property of iterable
     if key == "$ref"
-      rows.push { isRef: true, href: property.value }
+      ( rows.push { isRef: true, href: property.value } )
     else
       row = { isRef: false, type: property.Ctype }
       
@@ -20,7 +20,7 @@ buildViewModel = ( iterable, isArray = false ) ->
         row.type = "simple"
         row.value = property.value
       
-      rows.push row
+      ( rows.push row )
       
   isArray: isArray
   rows: rows
@@ -29,7 +29,7 @@ build = ( schema, references ) ->
   root = ( buildViewModel schema, false )
   subschemas = []
   for key, reference of references
-    subschemas.push { id: key, model: ( buildViewModel reference.value, false ) }
+    ( subschemas.push { id: key, model: ( buildViewModel reference.value, false ) } )
   
   root: root
   subschemas: subschemas

@@ -20,121 +20,129 @@ import { buildTabularSections } from "./tabular"
 class Schema
 
   constructor: ( @source ) ->
-    @refKeys = []
+    @referenceKeys = []
 
   decode: ->
-    @refKeys = []
+    @referenceKeys = []
     @schema = clone @source
     hoistNested @schema
     
     resolvedSchema = clone @source
     hoistNested resolvedSchema
     
-    resolved = await $RefParser.resolve resolvedSchema, external: false
+    resolved = await $RefParser.resolve( resolvedSchema, external: false )
     @decorator @schema
-    @refs = {}
-    for key in @refKeys
-      cleanKey = key.slice 1
-      @refs[cleanKey] = resolved.get key
-    @decorator @refs
-    delete @schema["$schema"]
-    delete @schema["$defs"]
+    @references = {}
+    for key in @referenceKeys
+      cleanKey = key.slice( 1 )
+      @references[ cleanKey ] = resolved.get( key )
+    @decorator @references
+    delete @schema[ "$schema" ]
+    delete @schema[ "$defs" ]
 
   decorator: ( iterable ) ->
     for key, value of iterable
       if key == "$ref"
-        @refKeys.push value
+        @referenceKeys.push value
       if isString value
-        iterable[key] = { Ctype: "string", value }
+        iterable[ key ] = { Ctype: "string", value }
       else if isNumber value
-        iterable[key] = { Ctype: "number", value }
+        iterable[ key ] = { Ctype: "number", value }
       else if isBoolean value
-        iterable[key] = { Ctype: "boolean", value }
+        iterable[ key ] = { Ctype: "boolean", value }
       else if isObject value
-        iterable[key] = { Ctype: "object", value }
-        @decorator iterable[key].value
+        iterable[ key ] = { Ctype: "object", value }
+        @decorator iterable[ key ].value
       else if isArray value
         if ( areType isString, value ) ||
         ( areType isNumber, value ) ||
         ( areType isBoolean, value )
-          iterable[key] = { Ctype: "string", value: value.join ", " }
+          iterable[ key ] = { Ctype: "string", value: value.join( ", " ) }
         else
-          iterable[key] = { Ctype: "array", value }
-          @decorator iterable[key].value
+          iterable[ key ] = { Ctype: "array", value }
+          @decorator iterable[ key ].value
 
   html: ( options = { tabular: true } ) ->
     await @decode()
     if !options.tabular
-      sections = buildProseViewModel @schema, @refs
+      sections = buildProseViewModel @schema, @references
       
       title = if @schema.title?.value?
         "#{@schema.title.value} — Schema Reference"
-      else if sections[0]?
-        "#{sections[0].heading} — Schema Reference"
+      else if sections[ 0 ]?
+        "#{sections[ 0 ].heading} — Schema Reference"
       else
         "Untitled Schema Reference"
         
-      navigation = if sections[0]?
-        root:
-          href: "##{sections[0].id}"
-          text: sections[0].heading
-        subschemas:
+      navigation = if sections[ 0 ]?
+        sublist =
           ( { href: "##{sec.id}", text: sec.heading } for sec in sections.slice 1 )
+        root:
+          href: "##{sections[ 0 ].id}"
+          text: sections[ 0 ].heading
+        subschemas: sublist
       else
         null
         
       fullHtml { @schema, sections, options, title, navigation }
     else
-      tabular = buildTabularSections @schema, @refs
+      tabular = buildTabularSections @schema, @references
       
       title = if @schema.title?.value?
         "#{@schema.title.value} — Schema Reference"
       else
         "Untitled Schema Reference"
         
+      sublist =
+        for key, ref of @references
+          {
+            href: "##{key}"
+            text: ref.value.title?.value || "Untitled"
+          }
+          
       navigation =
         root:
           href: "#top-level"
           text: @schema.title?.value || "Untitled"
-        subschemas:
-          ( { href: "##{key}", text: ref.value.title?.value || "Untitled" } for key, ref of @refs )
+        subschemas: sublist
           
       fullHtml { @schema, tabular, options, title, navigation }
 
   resolve: ( options = { tabular: true } ) ->
     await @decode()
     if !options.tabular
-      sections = buildProseViewModel @schema, @refs
+      sections = buildProseViewModel @schema, @references
       resolveHtml { @schema, sections, options }
     else
-      tabular = buildTabularSections @schema, @refs
+      tabular = buildTabularSections @schema, @references
       resolveHtml { @schema, tabular, options }
 
   markdown: ( options = {} ) ->
-    opts = Object.assign { tabular: false }, options
-    htmlContent = await @html opts
+    mergedOptions = Object.assign { tabular: false }, options
+    htmlContent = await @html mergedOptions
     turndown = new TurndownService emDelimiter: "_"
     turndown.remove [ "title", "nav" ]
     turndown.addRule 'table',
       filter: 'table'
       replacement: ( content, node ) ->
-        rows = Array.from node.querySelectorAll 'tr'
+        rows = Array.from( node.querySelectorAll 'tr' )
         mdRows = []
         for row in rows
-          cells = Array.from row.querySelectorAll 'th, td'
+          cells = Array.from( row.querySelectorAll 'th, td' )
           mdCells = []
           for cell in cells
-            html = cell.innerHTML.replace /<br\s*\/?>/gi, '^^BR^^'
+            html = cell.innerHTML.replace( /<br\s*\/?>/gi, '^^BR^^' )
             text = turndown.turndown( html ).trim()
-            text = text.replace /\^\^BR\^\^/g, '<br>'
-            text = text.replace /\|/g, '\\|'
-            text = text.replace /\r?\n/g, ' '
+            text = text.replace( /\^\^BR\^\^/g, '<br>' )
+            text = text.replace( /\|/g, '\\|' )
+            text = text.replace( /\r?\n/g, ' ' )
             mdCells.push text
           mdRows.push "| " + mdCells.join( " | " ) + " |"
         if mdRows.length > 0
-          headerRow = mdRows[0]
-          cellsCount = Array.from( rows[0].querySelectorAll 'th, td' ).length
-          separatorCells = ( "---" for i in [1..cellsCount] )
+          headerRow = mdRows[ 0 ]
+          cellsCount =
+            Array.from( rows[ 0 ].querySelectorAll 'th, td' ).length
+          separatorCells = ( "---" for i in [ 1..cellsCount ] )
           separatorRow = "| " + separatorCells.join( " | " ) + " |"
           mdRows.splice 1, 0, separatorRow
         "\n\n" + mdRows.join( "\n" ) + "\n\n"

@@ -17,25 +17,28 @@ buildTabularViewModel = ( iterable, isArray = false ) ->
         row.type = "simple"
         row.value = property.value
       else if property.Ctype == "object"
-        row.value = buildTabularViewModel property.value, false
+        row.value = ( buildTabularViewModel property.value, false )
       else if property.Ctype == "array"
-        row.value = buildTabularViewModel property.value, true
+        row.value = ( buildTabularViewModel property.value, true )
       else
         row.type = "simple"
         row.value = property.value
       
       rows.push row
       
-  return { isArray, rows }
+  isArray: isArray
+  rows: rows
 
-buildTabularSections = ( schema, refs ) ->
-  root = buildTabularViewModel schema, false
+buildTabularSections = ( schema, references ) ->
+  root = ( buildTabularViewModel schema, false )
   subschemas = []
-  for key, ref of refs
+  for key, reference of references
     subschemas.push
       id: key
-      model: buildTabularViewModel ref.value, false
-  return { root, subschemas }
+      model: ( buildTabularViewModel reference.value, false )
+  
+  root: root
+  subschemas: subschemas
 
 export {
   buildTabularViewModel

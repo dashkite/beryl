@@ -6,23 +6,23 @@ areType = ( typeChecker, array ) ->
 
 slugify = ( text ) ->
   text.toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
+    .replace( /[^a-z0-9\s-]/g, "" )
+    .replace( /\s+/g, "-" )
+    .replace( /-+/g, "-" )
 
-getHeadingName = ( key, refSchema ) ->
-  if refSchema?.title?.value?
-    refSchema.title.value
+getHeadingName = ( key, referenceSchema ) ->
+  if referenceSchema?.title?.value?
+    referenceSchema.title.value
   else
-    parts = key.split "/"
-    lastName = parts[parts.length - 1]
-    titleCase uncase lastName
+    parts = key.split( "/" )
+    lastName = parts[ parts.length - 1 ]
+    ( titleCase ( uncase lastName ) )
 
-getRefLink = ( refVal, refs ) ->
-  refObj = refs[refVal.slice 1]
-  rSchema = refObj?.value
-  headingName = getHeadingName refVal, rSchema
-  slug = slugify headingName
+getRefLink = ( referenceValue, references ) ->
+  referenceObject = references[ referenceValue.slice( 1 ) ]
+  referenceSchema = referenceObject?.value
+  headingName = ( getHeadingName referenceValue, referenceSchema )
+  slug = ( slugify headingName )
   "<a href=\"##{slug}\">#{headingName}</a>"
 
 getPropertyLabel = ( name ) ->
@@ -38,7 +38,7 @@ getPropertyLabel = ( name ) ->
     when "allOf" then "All Of"
     when "oneOf" then "One Of"
     when "$ref" then "Reference"
-    else titleCase uncase name
+    else ( titleCase ( uncase name ) )
 
 export {
   areType

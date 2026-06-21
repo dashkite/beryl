@@ -1,100 +1,101 @@
 import { titleCase, uncase } from "@dashkite/joy/text"
 import { getRefLink, slugify, getPropertyLabel } from "./helpers"
 
-formatTypeDirect = ( typeVal ) ->
-  if !typeVal
+formatTypeDirect = ( typeValue ) ->
+  if !typeValue
     "Object"
   else
-    types = typeVal.split ", "
+    types = typeValue.split( ", " )
     capitalized = ( titleCase t for t in types )
     if capitalized.length == 1
-      capitalized[0]
+      capitalized[ 0 ]
     else if capitalized.length == 2
-      capitalized.join " or "
+      capitalized.join( " or " )
     else
       last = capitalized.pop()
-      "#{capitalized.join ", "}, or #{last}"
+      "#{capitalized.join( ", " )}, or #{last}"
 
-formatType = ( propSchema, refSchema ) ->
-  type = propSchema.type?.value || refSchema?.type?.value
-  formatTypeDirect type
+formatType = ( propertySchema, referenceSchema ) ->
+  type = propertySchema.type?.value || referenceSchema?.type?.value
+  ( formatTypeDirect type )
 
-formatSubschema = ( obj, refs ) ->
-  keys = ( k for k, v of obj when k not in [
-    "title", "description", "properties", "patternProperties"
-  ] )
-  if keys.length == 1 && keys[0] == "$ref"
-    return formatPropertyVal "$ref", obj.$ref, refs
-    
-  parts = []
-  for key in keys
-    formattedVal = formatPropertyVal key, obj[key], refs
-    if formattedVal
-      parts.push "#{getPropertyLabel key}: #{formattedVal}"
-  parts.join "; "
+formatSubschema = ( object, references ) ->
+  keys =
+    ( key for key, value of object when key not in [
+      "title", "description", "properties", "patternProperties"
+    ] )
+  if keys.length == 1 && keys[ 0 ] == "$ref"
+    ( formatPropertyVal "$ref", object.$ref, references )
+  else
+    parts = []
+    for key in keys
+      formattedValue = ( formatPropertyVal key, object[ key ], references )
+      if formattedValue
+        parts.push "#{getPropertyLabel key}: #{formattedValue}"
+    parts.join( "; " )
 
-formatCombinator = ( name, arrayVal, refs ) ->
+formatCombinator = ( name, arrayValue, references ) ->
   conjunction = if name == "allOf" then "and" else "or"
   options = []
-  for item in arrayVal
-    options.push formatSubschema item.value, refs
+  for item in arrayValue
+    options.push( formatSubschema item.value, references )
   if options.length == 1
-    options[0]
+    options[ 0 ]
   else if options.length == 2
-    options.join " #{conjunction} "
+    options.join( " #{conjunction} " )
   else
     last = options.pop()
-    "#{options.join ", "}, #{conjunction} #{last}"
+    "#{options.join( ", " )}, #{conjunction} #{last}"
 
-formatPropertyVal = ( name, property, refs ) ->
+formatPropertyVal = ( name, property, references ) ->
   if !property?
-    return ""
-    
-  if property.Ctype == "string"
-    if name == "type"
-      formatTypeDirect property.value
-    else if name == "pattern"
-      "<code>#{property.value}</code>"
-    else if name == "required"
-      propNames = property.value.split ", "
-      links = []
-      for p in propNames
-        title = titleCase uncase p
-        slug = slugify title
-        links.push "<a href=\"##{slug}\">#{title}</a>"
-      links.join ", "
-    else if name == "$ref" or property.value.startsWith? "#"
-      getRefLink property.value, refs
-    else
-      property.value
-      
-  else if property.Ctype == "number" or property.Ctype == "boolean"
-    String property.value
-    
-  else if property.Ctype == "object"
-    if property.value.$ref
-      getRefLink property.value.$ref.value, refs
-    else
-      formatSubschema property.value, refs
-      
-  else if property.Ctype == "array"
-    if name in [ "anyOf", "allOf", "oneOf" ]
-      formatCombinator name, property.value, refs
-    else
-      options = []
-      for item in property.value
-        if item.Ctype == "object"
-          if item.value.$ref
-            options.push getRefLink item.value.$ref.value, refs
-          else
-            options.push formatSubschema item.value, refs
-        else if item.Ctype == "string"
-          options.push item.value
-        else
-          options.push String item.value
-      options.join ", "
-  else
     ""
+  else
+    if property.Ctype == "string"
+      if name == "type"
+        ( formatTypeDirect property.value )
+      else if name == "pattern"
+        "<code>#{property.value}</code>"
+      else if name == "required"
+        propertyNames = property.value.split( ", " )
+        links = []
+        for propertyName in propertyNames
+          title = ( titleCase ( uncase propertyName ) )
+          slug = ( slugify title )
+          links.push( "<a href=\"##{slug}\">#{title}</a>" )
+        links.join( ", " )
+      else if name == "$ref" || property.value.startsWith? "#"
+        ( getRefLink property.value, references )
+      else
+        property.value
+        
+    else if property.Ctype == "number" || property.Ctype == "boolean"
+      String property.value
+      
+    else if property.Ctype == "object"
+      if property.value.$ref
+        ( getRefLink property.value.$ref.value, references )
+      else
+        ( formatSubschema property.value, references )
+        
+    else if property.Ctype == "array"
+      if name in [ "anyOf", "allOf", "oneOf" ]
+        ( formatCombinator name, property.value, references )
+      else
+        options = []
+        for item in property.value
+          if item.Ctype == "object"
+            if item.value.$ref
+              options.push( getRefLink item.value.$ref.value, references )
+            else
+              options.push( formatSubschema item.value, references )
+          else if item.Ctype == "string"
+            options.push item.value
+          else
+            options.push( String item.value )
+        options.join( ", " )
+    else
+      ""
 
 export {
   formatTypeDirect

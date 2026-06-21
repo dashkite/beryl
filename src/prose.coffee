@@ -1,115 +1,122 @@
 import { getHeadingName, slugify, getPropertyLabel } from "./helpers"
 import { formatPropertyVal } from "./formatting"
 
-buildPropertySection = ( propName, prop, isPattern, refs ) ->
-  desc = prop.value.description?.value || null
-  if prop.Ctype == "object" && prop.value.$ref?
-    refVal = prop.value.$ref.value
-    refSchema = refs[refVal.slice 1]?.value
-    desc = desc || refSchema?.description?.value || null
+buildPropertySection = ( propertyName, property, isPattern, references ) ->
+  description = property.value.description?.value || null
+  if property.Ctype == "object" && property.value.$ref?
+    referenceValue = property.value.$ref.value
+    referenceSchema = references[ referenceValue.slice( 1 ) ]?.value
+    description = description || referenceSchema?.description?.value || null
     
   tableRows = []
-  if !(prop.Ctype == "object" && prop.value.$ref?)
-    for subPropName, subProp of prop.value
-      if subPropName not in [
+  if !( property.Ctype == "object" && property.value.$ref? )
+    for subPropertyName, subProperty of property.value
+      if subPropertyName not in [
         "title", "description", "properties", "patternProperties"
       ]
-        if subPropName == "items" && subProp.Ctype == "object" &&
-        subProp.value.$ref?
+        if subPropertyName == "items" &&
+        subProperty.Ctype == "object" &&
+        subProperty.value.$ref?
           continue
-        if subPropName == "$ref"
+        if subPropertyName == "$ref"
           continue
         
-        label = getPropertyLabel subPropName
-        value = formatPropertyVal subPropName, subProp, refs
+        label = getPropertyLabel subPropertyName
+        value = ( formatPropertyVal subPropertyName, subProperty, references )
         if value != ""
           tableRows.push { label, value }
           
-  references = []
-  if prop.Ctype == "object" && prop.value.$ref?
-    refVal = prop.value.$ref.value
-    hName = getHeadingName refVal, refs[refVal.slice 1]?.value
-    references.push { href: "##{slugify hName}", text: hName }
+  refList = []
+  if property.Ctype == "object" && property.value.$ref?
+    referenceValue = property.value.$ref.value
+    headingName =
+      ( getHeadingName referenceValue, references[ referenceValue.slice( 1 ) ]?.value )
+    refList.push { href: "##{slugify headingName}", text: headingName }
     
-  if prop.value.items? && prop.value.items.Ctype == "object" &&
-  prop.value.items.value.$ref?
-    refVal = prop.value.items.value.$ref.value
-    hName = getHeadingName refVal, refs[refVal.slice 1]?.value
-    references.push { href: "##{slugify hName}", text: hName }
+  if property.value.items? && property.value.items.Ctype == "object" &&
+  property.value.items.value.$ref?
+    referenceValue = property.value.items.value.$ref.value
+    headingName =
+      ( getHeadingName referenceValue, references[ referenceValue.slice( 1 ) ]?.value )
+    refList.push { href: "##{slugify headingName}", text: headingName }
 
   if isPattern
-    heading = propName
-    id = slugify "Properties matching " + propName
+    heading = propertyName
+    id = ( slugify ( "Properties matching " + propertyName ) )
   else
-    heading = getHeadingName propName, prop.value
-    id = slugify heading
+    heading = ( getHeadingName propertyName, property.value )
+    id = ( slugify heading )
 
-  return {
-    id
-    heading
-    isPattern
-    description: desc
-    tableRows
-    references
-  }
+  id: id
+  heading: heading
+  isPattern: isPattern
+  description: description
+  tableRows: tableRows
+  references: refList
 
-buildSection = ( key, iterable, isRoot, refs ) ->
-  heading = getHeadingName key, iterable
-  id = slugify heading
+buildSection = ( key, iterable, isRoot, references ) ->
+  heading = ( getHeadingName key, iterable )
+  id = ( slugify heading )
   
   description = iterable.description?.value || null
   
   tableRows = []
-  for propName, prop of iterable
-    if propName not in [
+  for propertyName, property of iterable
+    if propertyName not in [
       "title", "description", "properties", "patternProperties"
     ]
-      if propName == "items" && prop.Ctype == "object" && prop.value.$ref?
+      if propertyName == "items" &&
+      property.Ctype == "object" &&
+      property.value.$ref?
         continue
-      if propName == "$ref"
+      if propertyName == "$ref"
         continue
       
-      label = getPropertyLabel propName
-      value = formatPropertyVal propName, prop, refs
+      label = getPropertyLabel propertyName
+      value = ( formatPropertyVal propertyName, property, references )
       if value != ""
         tableRows.push { label, value }
         
-  references = []
+  refList = []
   if iterable.$ref?
-    refVal = iterable.$ref.value
-    hName = getHeadingName refVal, refs[refVal.slice 1]?.value
-    references.push { href: "##{slugify hName}", text: hName }
+    referenceValue = iterable.$ref.value
+    headingName =
+      ( getHeadingName referenceValue, references[ referenceValue.slice( 1 ) ]?.value )
+    refList.push { href: "##{slugify headingName}", text: headingName }
     
   if iterable.items? && iterable.items.Ctype == "object" &&
   iterable.items.value.$ref?
-    refVal = iterable.items.value.$ref.value
-    hName = getHeadingName refVal, refs[refVal.slice 1]?.value
-    references.push { href: "##{slugify hName}", text: hName }
+    referenceValue = iterable.items.value.$ref.value
+    headingName =
+      ( getHeadingName referenceValue, references[ referenceValue.slice( 1 ) ]?.value )
+    refList.push { href: "##{slugify headingName}", text: headingName }
 
   properties = []
   if iterable.properties?
-    for propName, prop of iterable.properties.value
-      properties.push buildPropertySection propName, prop, false, refs
+    for propertyName, property of iterable.properties.value
+      properties.push(
+        ( buildPropertySection propertyName, property, false, references )
+      )
       
   if iterable.patternProperties?
     for pattern, patternSchema of iterable.patternProperties.value
-      properties.push buildPropertySection pattern, patternSchema, true, refs
+      properties.push(
+        ( buildPropertySection pattern, patternSchema, true, references )
+      )
       
-  return {
-    id
-    heading
-    isRoot
-    description
-    tableRows
-    references
-    properties
-  }
+  id: id
+  heading: heading
+  isRoot: isRoot
+  description: description
+  tableRows: tableRows
+  references: refList
+  properties: properties
 
-buildProseViewModel = ( schema, refs ) ->
+buildProseViewModel = ( schema, references ) ->
   sections = []
-  sections.push buildSection "top-level", schema, true, refs
-  for key, ref of refs
-    sections.push buildSection key, ref.value, false, refs
+  sections.push( ( buildSection "top-level", schema, true, references ) )
+  for key, reference of references
+    sections.push( ( buildSection key, reference.value, false, references ) )
   sections
 
 export {

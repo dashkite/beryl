@@ -26,19 +26,21 @@ buildPropertySection = ( propertyName, property, isPattern, references ) ->
         if value != ""
           tableRows.push { label, value }
           
-  refList = []
+  referenceList = []
   if property.Ctype == "object" && property.value.$ref?
     referenceValue = property.value.$ref.value
     headingName =
-      ( getHeadingName referenceValue, references[ referenceValue.slice( 1 ) ]?.value )
-    refList.push { href: "##{slugify headingName}", text: headingName }
+      ( getHeadingName referenceValue,
+        references[ referenceValue.slice( 1 ) ]?.value )
+    referenceList.push { href: "##{ slugify headingName }", text: headingName }
     
   if property.value.items? && property.value.items.Ctype == "object" &&
   property.value.items.value.$ref?
     referenceValue = property.value.items.value.$ref.value
     headingName =
-      ( getHeadingName referenceValue, references[ referenceValue.slice( 1 ) ]?.value )
-    refList.push { href: "##{slugify headingName}", text: headingName }
+      ( getHeadingName referenceValue,
+        references[ referenceValue.slice( 1 ) ]?.value )
+    referenceList.push { href: "##{ slugify headingName }", text: headingName }
 
   if isPattern
     heading = propertyName
@@ -52,7 +54,7 @@ buildPropertySection = ( propertyName, property, isPattern, references ) ->
   isPattern: isPattern
   description: description
   tableRows: tableRows
-  references: refList
+  references: referenceList
 
 buildSection = ( key, iterable, isRoot, references ) ->
   heading = ( getHeadingName key, iterable )
@@ -77,19 +79,21 @@ buildSection = ( key, iterable, isRoot, references ) ->
       if value != ""
         tableRows.push { label, value }
         
-  refList = []
+  referenceList = []
   if iterable.$ref?
     referenceValue = iterable.$ref.value
     headingName =
-      ( getHeadingName referenceValue, references[ referenceValue.slice( 1 ) ]?.value )
-    refList.push { href: "##{slugify headingName}", text: headingName }
+      ( getHeadingName referenceValue,
+        references[ referenceValue.slice( 1 ) ]?.value )
+    referenceList.push { href: "##{ slugify headingName }", text: headingName }
     
   if iterable.items? && iterable.items.Ctype == "object" &&
   iterable.items.value.$ref?
     referenceValue = iterable.items.value.$ref.value
     headingName =
-      ( getHeadingName referenceValue, references[ referenceValue.slice( 1 ) ]?.value )
-    refList.push { href: "##{slugify headingName}", text: headingName }
+      ( getHeadingName referenceValue,
+        references[ referenceValue.slice( 1 ) ]?.value )
+    referenceList.push { href: "##{ slugify headingName }", text: headingName }
 
   properties = []
   if iterable.properties?
@@ -109,7 +113,7 @@ buildSection = ( key, iterable, isRoot, references ) ->
   isRoot: isRoot
   description: description
   tableRows: tableRows
-  references: refList
+  references: referenceList
   properties: properties
 
 buildProseViewModel = ( schema, references ) ->

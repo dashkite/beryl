@@ -23,7 +23,7 @@ getRefLink = ( referenceValue, references ) ->
   referenceSchema = referenceObject?.value
   headingName = ( getHeadingName referenceValue, referenceSchema )
   slug = ( slugify headingName )
-  "<a href=\"##{slug}\">#{headingName}</a>"
+  "<a href=\"##{ slug }\">#{ headingName }</a>"
 
 getPropertyLabel = ( name ) ->
   switch name

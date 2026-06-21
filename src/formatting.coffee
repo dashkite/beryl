@@ -13,7 +13,7 @@ formatTypeDirect = ( typeValue ) ->
       capitalized.join( " or " )
     else
       last = capitalized.pop()
-      "#{capitalized.join( ", " )}, or #{last}"
+      "#{ capitalized.join( ", " ) }, or #{ last }"
 
 formatType = ( propertySchema, referenceSchema ) ->
   type = propertySchema.type?.value || referenceSchema?.type?.value
@@ -31,7 +31,7 @@ formatSubschema = ( object, references ) ->
     for key in keys
       formattedValue = ( formatPropertyVal key, object[ key ], references )
       if formattedValue
-        parts.push "#{getPropertyLabel key}: #{formattedValue}"
+        parts.push "#{ getPropertyLabel key }: #{ formattedValue }"
     parts.join( "; " )
 
 formatCombinator = ( name, arrayValue, references ) ->
@@ -42,10 +42,10 @@ formatCombinator = ( name, arrayValue, references ) ->
   if options.length == 1
     options[ 0 ]
   else if options.length == 2
-    options.join( " #{conjunction} " )
+    options.join( " #{ conjunction } " )
   else
     last = options.pop()
-    "#{options.join( ", " )}, #{conjunction} #{last}"
+    "#{ options.join( ", " ) }, #{ conjunction} #{ last }"
 
 formatPropertyVal = ( name, property, references ) ->
   if !property?
@@ -55,14 +55,14 @@ formatPropertyVal = ( name, property, references ) ->
       if name == "type"
         ( formatTypeDirect property.value )
       else if name == "pattern"
-        "<code>#{property.value}</code>"
+        "<code>#{ property.value }</code>"
       else if name == "required"
         propertyNames = property.value.split( ", " )
         links = []
         for propertyName in propertyNames
           title = ( titleCase ( uncase propertyName ) )
           slug = ( slugify title )
-          links.push( "<a href=\"##{slug}\">#{title}</a>" )
+          links.push( "<a href=\"##{ slug }\">#{ title }</a>" )
         links.join( ", " )
       else if name == "$ref" || property.value.startsWith? "#"
         ( getRefLink property.value, references )

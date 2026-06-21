@@ -68,18 +68,16 @@ class Schema
       sections = buildProseViewModel @schema, @references
       
       title = if @schema.title?.value?
-        "#{@schema.title.value} — Schema Reference"
+        "#{ @schema.title.value } — Schema Reference"
       else if sections[ 0 ]?
-        "#{sections[ 0 ].heading} — Schema Reference"
+        "#{ sections[ 0 ].heading } — Schema Reference"
       else
         "Untitled Schema Reference"
         
       navigation = if sections[ 0 ]?
         sublist =
-          ( { href: "##{sec.id}", text: sec.heading } for sec in sections.slice 1 )
-        root:
-          href: "##{sections[ 0 ].id}"
-          text: sections[ 0 ].heading
+          ( { href: "##{ sec.id }", text: sec.heading } for sec in sections.slice 1 )
+        root: { href: "##{ sections[ 0 ].id }", text: sections[ 0 ].heading }
         subschemas: sublist
       else
         null
@@ -89,21 +87,16 @@ class Schema
       tabular = buildTabularSections @schema, @references
       
       title = if @schema.title?.value?
-        "#{@schema.title.value} — Schema Reference"
+        "#{ @schema.title.value } — Schema Reference"
       else
         "Untitled Schema Reference"
         
       sublist =
         for key, ref of @references
-          {
-            href: "##{key}"
-            text: ref.value.title?.value || "Untitled"
-          }
+          { href: "##{ key }", text: ref.value.title?.value || "Untitled" }
           
       navigation =
-        root:
-          href: "#top-level"
-          text: @schema.title?.value || "Untitled"
+        root: { href: "#top-level", text: @schema.title?.value || "Untitled" }
         subschemas: sublist
           
       fullHtml { @schema, tabular, options, title, navigation }

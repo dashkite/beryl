@@ -2,13 +2,9 @@ buildTabularViewModel = ( iterable, isArray = false ) ->
   rows = []
   for key, property of iterable
     if key == "$ref"
-      rows.push
-        isRef: true
-        href: property.value
+      rows.push { isRef: true, href: property.value }
     else
-      row =
-        isRef: false
-        type: property.Ctype
+      row = { isRef: false, type: property.Ctype }
       
       if not isArray
         row.name = key
@@ -33,9 +29,10 @@ buildTabularSections = ( schema, references ) ->
   root = ( buildTabularViewModel schema, false )
   subschemas = []
   for key, reference of references
-    subschemas.push
+    subschemas.push {
       id: key
       model: ( buildTabularViewModel reference.value, false )
+    }
   
   root: root
   subschemas: subschemas

@@ -24,7 +24,7 @@ hoistNested = ( schema ) ->
             if !property.title?
               property.title = ( titleCase ( uncase hoistedName ) )
             
-            referenceObject = { $ref: "#/$defs/#{hoistedName}" }
+            referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
             if property.description?
               referenceObject.description = property.description
             object.properties[ propertyName ] = referenceObject
@@ -42,14 +42,14 @@ hoistNested = ( schema ) ->
             if !patternSchema.title?
               patternSchema.title = ( titleCase ( uncase hoistedName ) )
             
-            referenceObject = { $ref: "#/$defs/#{hoistedName}" }
+            referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
             if patternSchema.description?
               referenceObject.description = patternSchema.description
             object.patternProperties[ pattern ] = referenceObject
             
             traverse hoistedName, patternSchema
           else
-            traverse "#{name}Pattern", patternSchema
+            traverse "#{ name }Pattern", patternSchema
 
       if object.items?
         if isArray object.items
@@ -60,13 +60,13 @@ hoistNested = ( schema ) ->
               if !item.title?
                 item.title =
                   ( titleCase ( uncase name ) ) + " Item " + ( index + 1 )
-              referenceObject = { $ref: "#/$defs/#{hoistedName}" }
+              referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
               if item.description?
                 referenceObject.description = item.description
               object.items[ index ] = referenceObject
               traverse hoistedName, item
             else
-              traverse "#{name}Item#{index + 1}", item
+              traverse "#{ name }Item#{ index + 1 }", item
         else if isObject object.items
           if ( shouldHoist object.items )
             hoistedName = ( titleCase name ) + "Items"
@@ -74,13 +74,13 @@ hoistNested = ( schema ) ->
             if !object.items.title?
               object.items.title =
                 ( titleCase ( uncase name ) ) + " Items"
-            referenceObject = { $ref: "#/$defs/#{hoistedName}" }
+            referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
             if object.items.description?
               referenceObject.description = object.items.description
             object.items = referenceObject
             traverse hoistedName, schema.$defs[ hoistedName ]
           else
-            traverse "#{name}Items", object.items
+            traverse "#{ name }Items", object.items
 
       for key in [ "anyOf", "allOf", "oneOf" ]
         if object[ key ]? && isArray object[ key ]
@@ -91,13 +91,13 @@ hoistNested = ( schema ) ->
               if !item.title?
                 item.title =
                   ( titleCase ( uncase name ) ) + " Variation " + ( index + 1 )
-              referenceObject = { $ref: "#/$defs/#{hoistedName}" }
+              referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
               if item.description?
                 referenceObject.description = item.description
               object[ key ][ index ] = referenceObject
               traverse hoistedName, item
             else
-              traverse "#{name}Variation#{index + 1}", item
+              traverse "#{ name }Variation#{ index + 1 }", item
 
       if object.$defs?
         for definitionName, definition of object.$defs

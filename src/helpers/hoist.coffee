@@ -49,123 +49,153 @@ parseHoistedName = ( hoistedName ) ->
       
   { baseTitle, parentTitle }
 
-nested = ( schema ) ->
-  schema.$defs = schema.$defs || {}
-  definitionsToTitle = {}
-  
-  traverse = ( name, object ) ->
+class Hoister
+  constructor: ( @schema ) ->
+    @schema.$defs ?= {}
+    @definitionsToTitle = {}
+
+  run: ->
+    rootName = if @schema.title?
+      ( titleCase ( uncase @schema.title ))
+    else
+      "Root"
+    rootName = ( rootName.replace /\s+/g, "" )
+    ( @traverse rootName, @schema )
+    ( @assignTitles() )
+
+  hoist: ({ name, propName, schemaObj, replaceCallback }) ->
+    if ( check schemaObj )
+      hoistedName = ( titleCase name ) + ( titleCase propName )
+      @schema.$defs[ hoistedName ] = schemaObj
+      if !schemaObj.title?
+        @definitionsToTitle[ hoistedName ] = { definition: schemaObj }
+      ( replaceCallback hoistedName )
+      hoistedName
+    else
+      null
+
+  traverse: ( name, object ) ->
     if isObject object
       if object.properties?
         for propertyName, property of object.properties
-          if ( check property )
-            hoistedName = ( titleCase name ) + ( titleCase propertyName )
-            schema.$defs[ hoistedName ] = property
-            if !property.title?
-              definitionsToTitle[ hoistedName ] = { definition: property }
-            
-            referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
-            if property.description?
-              referenceObject.description = property.description
-            object.properties[ propertyName ] = referenceObject
-            
-            ( traverse hoistedName, property )
+          hoisted =
+            ( @hoist {
+              name
+              propName: propertyName
+              schemaObj: property
+              replaceCallback: ( hoistedName ) =>
+                refObj = { $ref: "#/$defs/#{ hoistedName }" }
+                if property.description?
+                  refObj.description = property.description
+                object.properties[ propertyName ] = refObj
+            } )
+          if hoisted
+            ( @traverse hoisted, property )
           else
-            ( traverse propertyName, property )
-            
+            ( @traverse propertyName, property )
+
       if object.patternProperties?
         for pattern, patternSchema of object.patternProperties
-          if ( check patternSchema )
-            cleanPattern = ( pattern.replace /[^A-Za-z0-9]/g, "" )
-            hoistedName = ( titleCase name ) + ( titleCase cleanPattern )
-            schema.$defs[ hoistedName ] = patternSchema
-            if !patternSchema.title?
-              definitionsToTitle[ hoistedName ] = { definition: patternSchema }
-            
-            referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
-            if patternSchema.description?
-              referenceObject.description = patternSchema.description
-            object.patternProperties[ pattern ] = referenceObject
-            
-            ( traverse hoistedName, patternSchema )
+          cleanPattern = ( pattern.replace /[^A-Za-z0-9]/g, "" )
+          hoisted =
+            ( @hoist {
+              name
+              propName: cleanPattern
+              schemaObj: patternSchema
+              replaceCallback: ( hoistedName ) =>
+                refObj = { $ref: "#/$defs/#{ hoistedName }" }
+                if patternSchema.description?
+                  refObj.description = patternSchema.description
+                object.patternProperties[ pattern ] = refObj
+            } )
+          if hoisted
+            ( @traverse hoisted, patternSchema )
           else
-            ( traverse "#{ name }Pattern", patternSchema )
+            ( @traverse "#{ name }Pattern", patternSchema )
  
       if object.items?
         if isArray object.items
           for item, index in object.items
-            if ( check item )
-              hoistedName = ( titleCase name ) + "Item" + ( index + 1 )
-              schema.$defs[ hoistedName ] = item
-              if !item.title?
-                definitionsToTitle[ hoistedName ] = { definition: item }
-              referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
-              if item.description?
-                referenceObject.description = item.description
-              object.items[ index ] = referenceObject
-              ( traverse hoistedName, item )
+            hoisted =
+              ( @hoist {
+                name
+                propName: "Item#{ index + 1 }"
+                schemaObj: item
+                replaceCallback: ( hoistedName ) =>
+                  refObj = { $ref: "#/$defs/#{ hoistedName }" }
+                  if item.description?
+                    refObj.description = item.description
+                  object.items[ index ] = refObj
+              } )
+            if hoisted
+              ( @traverse hoisted, item )
             else
-              ( traverse "#{ name }Item#{ index + 1 }", item )
+              ( @traverse "#{ name }Item#{ index + 1 }", item )
         else if isObject object.items
-          if ( check object.items )
-            hoistedName = ( titleCase name ) + "Items"
-            schema.$defs[ hoistedName ] = object.items
-            if !object.items.title?
-              definitionsToTitle[ hoistedName ] = { definition: object.items }
-            referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
-            if object.items.description?
-              referenceObject.description = object.items.description
-            object.items = referenceObject
-            ( traverse hoistedName, schema.$defs[ hoistedName ] )
+          hoisted =
+            ( @hoist {
+              name
+              propName: "Items"
+              schemaObj: object.items
+              replaceCallback: ( hoistedName ) =>
+                refObj = { $ref: "#/$defs/#{ hoistedName }" }
+                if object.items.description?
+                  refObj.description = object.items.description
+                object.items = refObj
+              } )
+          if hoisted
+            ( @traverse hoisted, @schema.$defs[ hoisted ] )
           else
-            ( traverse "#{ name }Items", object.items )
+            ( @traverse "#{ name }Items", object.items )
  
       for key in [ "anyOf", "allOf", "oneOf" ]
         if object[ key ]? && isArray object[ key ]
           for item, index in object[ key ]
-            if ( check item )
-              hoistedName = ( titleCase name ) + "Variation" + ( index + 1 )
-              schema.$defs[ hoistedName ] = item
-              if !item.title?
-                definitionsToTitle[ hoistedName ] = { definition: item }
-              referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
-              if item.description?
-                referenceObject.description = item.description
-              object[ key ][ index ] = referenceObject
-              ( traverse hoistedName, item )
+            hoisted =
+              ( @hoist {
+                name
+                propName: "Variation#{ index + 1 }"
+                schemaObj: item
+                replaceCallback: ( hoistedName ) =>
+                  refObj = { $ref: "#/$defs/#{ hoistedName }" }
+                  if item.description?
+                    refObj.description = item.description
+                  object[ key ][ index ] = refObj
+              } )
+            if hoisted
+              ( @traverse hoisted, item )
             else
-              ( traverse "#{ name }Variation#{ index + 1 }", item )
+              ( @traverse "#{ name }Variation#{ index + 1 }", item )
  
       if object.$defs?
         for definitionName, definition of object.$defs
-          ( traverse definitionName, definition )
- 
-  rootName = if schema.title?
-    ( titleCase ( uncase schema.title ))
-  else
-    "Root"
-  rootName = ( rootName.replace /\s+/g, "" )
-  ( traverse rootName, schema )
- 
-  frequencies = {}
-  for definitionName, definition of schema.$defs
-    if definitionsToTitle[ definitionName ]?
-      info = definitionsToTitle[ definitionName ]
-      { baseTitle, parentTitle } = ( parseHoistedName definitionName )
-      info.baseTitle = baseTitle
-      info.parentTitle = parentTitle
-    else
-      baseTitle = if definition.title?
-        definition.title
+          ( @traverse definitionName, definition )
+
+  assignTitles: ->
+    frequencies = {}
+    for definitionName, definition of @schema.$defs
+      if @definitionsToTitle[ definitionName ]?
+        info = @definitionsToTitle[ definitionName ]
+        { baseTitle, parentTitle } = ( parseHoistedName definitionName )
+        info.baseTitle = baseTitle
+        info.parentTitle = parentTitle
       else
-        ( titleCase ( uncase definitionName ))
-        
-    frequencies[ baseTitle ] = ( frequencies[ baseTitle ] || 0 ) + 1
+        baseTitle = if definition.title?
+          definition.title
+        else
+          ( titleCase ( uncase definitionName ))
+          
+      frequencies[ baseTitle ] = ( frequencies[ baseTitle ] || 0 ) + 1
  
-  for definitionName, info of definitionsToTitle
-    if frequencies[ info.baseTitle ] > 1 && info.parentTitle != ""
-      info.definition.title = "#{ info.baseTitle } (#{ info.parentTitle })"
-    else
-      info.definition.title = info.baseTitle
+    for definitionName, info of @definitionsToTitle
+      if frequencies[ info.baseTitle ] > 1 && info.parentTitle != ""
+        info.definition.title = "#{ info.baseTitle } (#{ info.parentTitle })"
+      else
+        info.definition.title = info.baseTitle
+
+nested = ( schema ) ->
+  hoister = ( new Hoister schema )
+  ( hoister.run() )
 
 Hoist = {
   check

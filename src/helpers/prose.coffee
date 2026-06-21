@@ -1,5 +1,31 @@
 import { Format } from "./format"
 
+getReferences = ( iterable, references ) ->
+  list = []
+  if iterable.$ref?
+    refVal = iterable.$ref.value
+    heading = ( Format.heading refVal, references[ refVal[ 1.. ]]?.value )
+    ( list.push { href: "##{ Format.identifier heading }", text: heading } )
+  if iterable.items? && iterable.items.Ctype == "object" && iterable.items.value.$ref?
+    refVal = iterable.items.value.$ref.value
+    heading = ( Format.heading refVal, references[ refVal[ 1.. ]]?.value )
+    ( list.push { href: "##{ Format.identifier heading }", text: heading } )
+  list
+
+getTableRows = ( iterable, references ) ->
+  rows = []
+  for key, value of iterable
+    if key not in [ "title", "description", "properties", "patternProperties" ]
+      if key == "items" && value.Ctype == "object" && value.value.$ref?
+        continue
+      if key == "$ref"
+        continue
+      label = ( Format.label key )
+      valStr = ( Format.property key, value, references )
+      if valStr != ""
+        ( rows.push { label, value: valStr } )
+  rows
+
 buildProperty = ( propertyName, property, isPattern, references ) ->
   description = property.value.description?.value || null
   if property.Ctype == "object" && property.value.$ref?
@@ -9,37 +35,9 @@ buildProperty = ( propertyName, property, isPattern, references ) ->
     
   tableRows = []
   if !( property.Ctype == "object" && property.value.$ref? )
-    for subPropertyName, subProperty of property.value
-      if subPropertyName not in [
-        "title", "description", "properties", "patternProperties"
-      ]
-        if subPropertyName == "items" &&
-        subProperty.Ctype == "object" &&
-        subProperty.value.$ref?
-          continue
-        if subPropertyName == "$ref"
-          continue
-        
-        label = ( Format.label subPropertyName )
-        value = ( Format.property subPropertyName, subProperty, references )
-        if value != ""
-          ( tableRows.push { label, value } )
+    tableRows = ( getTableRows property.value, references )
           
-  referenceList = []
-  if property.Ctype == "object" && property.value.$ref?
-    referenceValue = property.value.$ref.value
-    headingName =
-      ( Format.heading referenceValue,
-        references[ referenceValue[ 1.. ]]?.value )
-    ( referenceList.push { href: "##{ Format.identifier headingName }", text: headingName } )
-    
-  if property.value.items? && property.value.items.Ctype == "object" &&
-  property.value.items.value.$ref?
-    referenceValue = property.value.items.value.$ref.value
-    headingName =
-      ( Format.heading referenceValue,
-        references[ referenceValue[ 1.. ]]?.value )
-    ( referenceList.push { href: "##{ Format.identifier headingName }", text: headingName } )
+  referenceList = ( getReferences property.value, references )
 
   if isPattern
     heading = propertyName
@@ -61,38 +59,8 @@ buildSection = ( key, iterable, isRoot, references ) ->
   
   description = iterable.description?.value || null
   
-  tableRows = []
-  for propertyName, property of iterable
-    if propertyName not in [
-      "title", "description", "properties", "patternProperties"
-    ]
-      if propertyName == "items" &&
-      property.Ctype == "object" &&
-      property.value.$ref?
-        continue
-      if propertyName == "$ref"
-        continue
-      
-      label = ( Format.label propertyName )
-      value = ( Format.property propertyName, property, references )
-      if value != ""
-        ( tableRows.push { label, value } )
-        
-  referenceList = []
-  if iterable.$ref?
-    referenceValue = iterable.$ref.value
-    headingName =
-      ( Format.heading referenceValue,
-        references[ referenceValue[ 1.. ]]?.value )
-    ( referenceList.push { href: "##{ Format.identifier headingName }", text: headingName } )
-    
-  if iterable.items? && iterable.items.Ctype == "object" &&
-  iterable.items.value.$ref?
-    referenceValue = iterable.items.value.$ref.value
-    headingName =
-      ( Format.heading referenceValue,
-        references[ referenceValue[ 1.. ]]?.value )
-    ( referenceList.push { href: "##{ Format.identifier headingName }", text: headingName } )
+  tableRows = ( getTableRows iterable, references )
+  referenceList = ( getReferences iterable, references )
 
   properties = []
   if iterable.properties?

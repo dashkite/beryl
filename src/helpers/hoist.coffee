@@ -13,6 +13,7 @@ check = ( object ) ->
 
 nested = ( schema ) ->
   schema.$defs = schema.$defs || {}
+  hoistedProperties = []
   
   traverse = ( name, object ) ->
     if isObject object
@@ -22,7 +23,11 @@ nested = ( schema ) ->
             hoistedName = ( titleCase name ) + ( titleCase propertyName )
             schema.$defs[ hoistedName ] = property
             if !property.title?
-              property.title = ( titleCase ( uncase hoistedName ))
+              hoistedProperties.push {
+                schema: property
+                propertyName: propertyName
+                parentName: name
+              }
             
             referenceObject = { $ref: "#/$defs/#{ hoistedName }" }
             if property.description?
@@ -50,7 +55,7 @@ nested = ( schema ) ->
             traverse hoistedName, patternSchema
           else
             traverse "#{ name }Pattern", patternSchema
-
+ 
       if object.items?
         if isArray object.items
           for item, index in object.items
@@ -81,7 +86,7 @@ nested = ( schema ) ->
             traverse hoistedName, schema.$defs[ hoistedName ]
           else
             traverse "#{ name }Items", object.items
-
+ 
       for key in [ "anyOf", "allOf", "oneOf" ]
         if object[ key ]? && isArray object[ key ]
           for item, index in object[ key ]
@@ -98,17 +103,42 @@ nested = ( schema ) ->
               traverse hoistedName, item
             else
               traverse "#{ name }Variation#{ index + 1 }", item
-
+ 
       if object.$defs?
         for definitionName, definition of object.$defs
           traverse definitionName, definition
-
+ 
   rootName = if schema.title?
     ( titleCase ( uncase schema.title ))
   else
     "Root"
   rootName = rootName.replace( /\s+/g, "" )
   traverse rootName, schema
+ 
+  frequencies = {}
+  for definitionName, definition of schema.$defs
+    matchingHp = null
+    for hp in hoistedProperties
+      if hp.schema == definition
+        matchingHp = hp
+        break
+        
+    baseTitle = if matchingHp?
+      ( titleCase ( uncase matchingHp.propertyName ))
+    else if definition.title?
+      definition.title
+    else
+      ( titleCase ( uncase definitionName ))
+      
+    frequencies[ baseTitle ] = ( frequencies[ baseTitle ] || 0 ) + 1
+ 
+  for hp in hoistedProperties
+    baseTitle = ( titleCase ( uncase hp.propertyName ))
+    if frequencies[ baseTitle ] > 1
+      parentTitle = ( titleCase ( uncase hp.parentName ))
+      hp.schema.title = "#{ baseTitle } (#{ parentTitle })"
+    else
+      hp.schema.title = baseTitle
 
 Hoist = {
   check

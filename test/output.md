@@ -1,7 +1,7 @@
 Rune Description
 ================
 
-[Action](#action) | [Action Variation 1](#action-variation-1) | [Action Variation 2](#action-variation-2) | [Action Variation 3](#action-variation-3) | [Grant Resources](#grant-resources) | [Grant Methods](#grant-methods) | [Grant Resolvers](#grant-resolvers) | [Grant Bindings](#grant-bindings) | [Resolver](#resolver) | [Grant](#grant) | [Grant Resources Include](#grant-resources-include) | [Grant Resources Exclude](#grant-resources-exclude) | [Grant Resources Items](#grant-resources-items) | [Grant Resources Include Items](#grant-resources-include-items) | [Grant Resources Exclude Items](#grant-resources-exclude-items) | [Grant Methods Items](#grant-methods-items) | [Grant Resolvers Items](#grant-resolvers-items) | [Rune Description Domain](#rune-description-domain) | [Expires](#expires) | [Rune Description Resolvers](#rune-description-resolvers) | [Rune Description Grants](#rune-description-grants)
+[Action](#action) | [Action Variation 1](#action-variation-1) | [Action Variation 2](#action-variation-2) | [Action Variation 3](#action-variation-3) | [Resources](#resources) | [Methods](#methods) | [Resolvers (Grant)](#resolvers-grant) | [Bindings](#bindings) | [Resolver](#resolver) | [Grant](#grant) | [Include](#include) | [Exclude](#exclude) | [Grant Resources Items](#grant-resources-items) | [Grant Resources Include Items](#grant-resources-include-items) | [Grant Resources Exclude Items](#grant-resources-exclude-items) | [Grant Methods Items](#grant-methods-items) | [Grant Resolvers Items](#grant-resolvers-items) | [Domain](#domain) | [Expires](#expires) | [Resolvers (Rune Description)](#resolvers-rune-description) | [Grants](#grants)
 
 A rune description describes the authorization grants for a domain.
 
@@ -17,7 +17,7 @@ A rune description describes the authorization grants for a domain.
 
 The domain the rune description is associated with.
 
-See: [Rune Description Domain](#rune-description-domain)
+See: [Domain](#domain)
 
 #### Expires
 
@@ -37,13 +37,13 @@ The identity the rune is associated with.
 
 A dictionary of resolvers.
 
-See: [Rune Description Resolvers](#rune-description-resolvers)
+See: [Resolvers (Rune Description)](#resolvers-rune-description)
 
 #### Grants
 
 An array of grants.
 
-See: [Rune Description Grants](#rune-description-grants)
+See: [Grants](#grants)
 
 Action
 ------
@@ -100,8 +100,8 @@ Action Variation 3
 | --- | --- |
 | Required Properties | [Name](#name) |
 
-Grant Resources
----------------
+Resources
+---------
 
 A list of resources the grant applies to.
 
@@ -117,14 +117,14 @@ See: [Grant Resources Items](#grant-resources-items)
 
 #### Include
 
-See: [Grant Resources Include](#grant-resources-include)
+See: [Include](#include)
 
 #### Exclude
 
-See: [Grant Resources Exclude](#grant-resources-exclude)
+See: [Exclude](#exclude)
 
-Grant Methods
--------------
+Methods
+-------
 
 A list of methods the grant applies to.
 
@@ -134,8 +134,8 @@ A list of methods the grant applies to.
 
 See: [Grant Methods Items](#grant-methods-items)
 
-Grant Resolvers
----------------
+Resolvers (Grant)
+-----------------
 
 A list of resolvers the grant relies on.
 
@@ -145,8 +145,8 @@ A list of resolvers the grant relies on.
 
 See: [Grant Resolvers Items](#grant-resolvers-items)
 
-Grant Bindings
---------------
+Bindings
+--------
 
 A dictionary of bindings the grant applies to.
 
@@ -198,28 +198,28 @@ A grant consists of a list of resources, methods, resolvers, and bindings. It de
 
 A list of resources the grant applies to.
 
-See: [Grant Resources](#grant-resources)
+See: [Resources](#resources)
 
 #### Methods
 
 A list of methods the grant applies to.
 
-See: [Grant Methods](#grant-methods)
+See: [Methods](#methods)
 
 #### Resolvers
 
 A list of resolvers the grant relies on.
 
-See: [Grant Resolvers](#grant-resolvers)
+See: [Resolvers (Grant)](#resolvers-grant)
 
 #### Bindings
 
 A dictionary of bindings the grant applies to.
 
-See: [Grant Bindings](#grant-bindings)
+See: [Bindings](#bindings)
 
-Grant Resources Include
------------------------
+Include
+-------
 
 | Name | Value |
 | --- | --- |
@@ -227,8 +227,8 @@ Grant Resources Include
 
 See: [Grant Resources Include Items](#grant-resources-include-items)
 
-Grant Resources Exclude
------------------------
+Exclude
+-------
 
 | Name | Value |
 | --- | --- |
@@ -276,8 +276,8 @@ Grant Resolvers Items
 | Type | String |
 | Pattern | `^[A-Za-z0-9\-]+$` |
 
-Rune Description Domain
------------------------
+Domain
+------
 
 The domain the rune description is associated with.
 
@@ -358,8 +358,8 @@ A duration object that represents when the rune expires.
 | --- | --- |
 | Type | Integer |
 
-Rune Description Resolvers
---------------------------
+Resolvers (Rune Description)
+----------------------------
 
 A dictionary of resolvers.
 
@@ -377,8 +377,8 @@ A resolver consists of an action.
 
 See: [Resolver](#resolver)
 
-Rune Description Grants
------------------------
+Grants
+------
 
 An array of grants.
 

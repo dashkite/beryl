@@ -4,12 +4,17 @@ mixin prose({ iterable, heading, id, isRoot, isArray, isPatternProperties })
       h1(id=id)= heading
     else
       h2(id=id)= heading
-    if iterable.description
-      p= iterable.description.value
+    - var typeStr = formatType(iterable, null)
+    p
+      strong Type: 
+      em= typeStr
+      | . 
+      if iterable.description
+        = iterable.description.value
 
   ul
     for property, propertyName in iterable
-      if !heading || (propertyName !== "title" && propertyName !== "description" && propertyName !== "properties")
+      if !heading || (propertyName !== "title" && propertyName !== "description" && propertyName !== "properties" && propertyName !== "type")
         li
           if !isArray
             if isPatternProperties
@@ -42,23 +47,34 @@ mixin prose({ iterable, heading, id, isRoot, isArray, isPatternProperties })
   if heading && iterable.properties
     h3 Properties
     for prop, propName in iterable.properties.value
-      h4= propName
+      h4= getHeadingName(propName, prop.value)
       if prop.Ctype == "object" && prop.value.$ref
         - var refVal = prop.value.$ref.value
         - var refSchema = refs[refVal.slice(1)]
+        - var typeStr = formatType(prop.value, refSchema)
         - var desc = prop.value.description ? prop.value.description.value : (refSchema ? refSchema.description?.value : null)
-        if desc
-          p= desc
+        p
+          strong Type: 
+          em= typeStr
+          | . 
+          if desc
+            = desc
         p
           | See 
           a(href=refVal)= getHeadingName(refVal, refSchema)
           | .
       else
-        if prop.value && prop.value.description
-          p= prop.value.description.value
+        - var typeStr = formatType(prop.value, null)
+        - var desc = prop.value.description ? prop.value.description.value : null
+        p
+          strong Type: 
+          em= typeStr
+          | . 
+          if desc
+            = desc
         ul
           for value, key in prop.value
-            if key !== "title" && key !== "description"
+            if key !== "title" && key !== "description" && key !== "type"
               li
                 if isPatternProperties
                   strong

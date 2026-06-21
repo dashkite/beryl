@@ -12,12 +12,60 @@ areType = ( typeChecker, array ) ->
   ( isArray array ) && ( array.every typeChecker )
 
 getHeadingName = ( key, refSchema ) ->
-  if refSchema.title?.value?
+  if refSchema?.title?.value?
     refSchema.title.value
   else
     parts = key.split "/"
     lastName = parts[parts.length - 1]
     titleCase uncase lastName
+
+formatType = ( propSchema, refSchema ) ->
+  type = propSchema.type?.value || refSchema?.type?.value
+  if !type
+    "Object"
+  else
+    types = type.split ", "
+    capitalized = ( titleCase t for t in types )
+    capitalized.join ", "
+
+hoistNested = ( schema ) ->
+  schema.$defs = schema.$defs || {}
+  
+  traverse = ( name, obj ) ->
+    if isObject obj
+      if obj.properties?
+        for propName, prop of obj.properties
+          if isObject prop
+            if prop.properties?
+              hoistedName = ( titleCase name ) + ( titleCase propName )
+              schema.$defs[hoistedName] = prop
+              if !prop.title?
+                prop.title = titleCase uncase hoistedName
+              
+              refObj = { $ref: "#/$defs/#{hoistedName}" }
+              if prop.description?
+                refObj.description = prop.description
+              obj.properties[propName] = refObj
+              
+              traverse hoistedName, prop
+            else
+              traverse propName, prop
+      
+      if obj.$defs?
+        for defName, def of obj.$defs
+          traverse defName, def
+      if obj.items?
+        traverse "#{name}Items", obj.items
+      if obj.anyOf?
+        for item, index in obj.anyOf
+          traverse "#{name}Option#{index}", item
+      if obj.patternProperties?
+        for pattern, patternSchema of obj.patternProperties
+          traverse "#{name}Pattern", patternSchema
+
+  rootName = if schema.title? then ( titleCase uncase schema.title ) else "Root"
+  rootName = rootName.replace /\s+/g, ""
+  traverse rootName, schema
 
 class Schema
 
@@ -27,7 +75,11 @@ class Schema
   decode: ->
     @refKeys = []
     @schema = clone @source
+    hoistNested @schema
+    
     resolvedSchema = clone @source
+    hoistNested resolvedSchema
+    
     resolved = await $RefParser.resolve resolvedSchema, external: false
     @decorator @schema
     @refs = {}
@@ -60,16 +112,16 @@ class Schema
 
   html: ( options = { tabular: true } ) ->
     await @decode()
-    fullHtml { @schema, @refs, options, getHeadingName }
+    fullHtml { @schema, @refs, options, getHeadingName, formatType }
 
   resolve: ( options = { tabular: true } ) ->
     await @decode()
-    resolveHtml { @schema, @refs, options, getHeadingName }
+    resolveHtml { @schema, @refs, options, getHeadingName, formatType }
 
   markdown: ( options = {} ) ->
     opts = Object.assign { tabular: false }, options
     htmlContent = await @html opts
-    turndown = new TurndownService
+    turndown = new TurndownService emDelimiter: "_"
     turndown.remove [ "title", "nav" ]
     turndown.turndown htmlContent
 

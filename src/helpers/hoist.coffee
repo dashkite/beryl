@@ -63,14 +63,16 @@ class Hoister
     ( @traverse rootName, @schema )
     ( @assignTitles() )
 
-  hoist: ({ name, propName, schemaObj, replaceCallback }) ->
+  hoist: ( name, propName, schemaObj ) ->
     if ( check schemaObj )
       hoistedName = ( titleCase name ) + ( titleCase propName )
       @schema.$defs[ hoistedName ] = schemaObj
       if !schemaObj.title?
         @definitionsToTitle[ hoistedName ] = { definition: schemaObj }
-      ( replaceCallback hoistedName )
-      hoistedName
+      refObj = { $ref: "#/$defs/#{ hoistedName }" }
+      if schemaObj.description?
+        refObj.description = schemaObj.description
+      { hoistedName, refObj }
     else
       null
 
@@ -78,92 +80,42 @@ class Hoister
     if isObject object
       if object.properties?
         for propertyName, property of object.properties
-          hoisted =
-            ( @hoist {
-              name
-              propName: propertyName
-              schemaObj: property
-              replaceCallback: ( hoistedName ) =>
-                refObj = { $ref: "#/$defs/#{ hoistedName }" }
-                if property.description?
-                  refObj.description = property.description
-                object.properties[ propertyName ] = refObj
-            } )
-          if hoisted
-            ( @traverse hoisted, property )
+          if hoisted = ( @hoist name, propertyName, property )
+            object.properties[ propertyName ] = hoisted.refObj
+            ( @traverse hoisted.hoistedName, property )
           else
             ( @traverse propertyName, property )
 
       if object.patternProperties?
         for pattern, patternSchema of object.patternProperties
           cleanPattern = ( pattern.replace /[^A-Za-z0-9]/g, "" )
-          hoisted =
-            ( @hoist {
-              name
-              propName: cleanPattern
-              schemaObj: patternSchema
-              replaceCallback: ( hoistedName ) =>
-                refObj = { $ref: "#/$defs/#{ hoistedName }" }
-                if patternSchema.description?
-                  refObj.description = patternSchema.description
-                object.patternProperties[ pattern ] = refObj
-            } )
-          if hoisted
-            ( @traverse hoisted, patternSchema )
+          if hoisted = ( @hoist name, cleanPattern, patternSchema )
+            object.patternProperties[ pattern ] = hoisted.refObj
+            ( @traverse hoisted.hoistedName, patternSchema )
           else
             ( @traverse "#{ name }Pattern", patternSchema )
  
       if object.items?
         if isArray object.items
           for item, index in object.items
-            hoisted =
-              ( @hoist {
-                name
-                propName: "Item#{ index + 1 }"
-                schemaObj: item
-                replaceCallback: ( hoistedName ) =>
-                  refObj = { $ref: "#/$defs/#{ hoistedName }" }
-                  if item.description?
-                    refObj.description = item.description
-                  object.items[ index ] = refObj
-              } )
-            if hoisted
-              ( @traverse hoisted, item )
+            if hoisted = ( @hoist name, "Item#{ index + 1 }", item )
+              object.items[ index ] = hoisted.refObj
+              ( @traverse hoisted.hoistedName, item )
             else
               ( @traverse "#{ name }Item#{ index + 1 }", item )
         else if isObject object.items
-          hoisted =
-            ( @hoist {
-              name
-              propName: "Items"
-              schemaObj: object.items
-              replaceCallback: ( hoistedName ) =>
-                refObj = { $ref: "#/$defs/#{ hoistedName }" }
-                if object.items.description?
-                  refObj.description = object.items.description
-                object.items = refObj
-              } )
-          if hoisted
-            ( @traverse hoisted, @schema.$defs[ hoisted ] )
+          if hoisted = ( @hoist name, "Items", object.items )
+            object.items = hoisted.refObj
+            ( @traverse hoisted.hoistedName, @schema.$defs[ hoisted.hoistedName ] )
           else
             ( @traverse "#{ name }Items", object.items )
  
       for key in [ "anyOf", "allOf", "oneOf" ]
         if object[ key ]? && isArray object[ key ]
           for item, index in object[ key ]
-            hoisted =
-              ( @hoist {
-                name
-                propName: "Variation#{ index + 1 }"
-                schemaObj: item
-                replaceCallback: ( hoistedName ) =>
-                  refObj = { $ref: "#/$defs/#{ hoistedName }" }
-                  if item.description?
-                    refObj.description = item.description
-                  object[ key ][ index ] = refObj
-              } )
-            if hoisted
-              ( @traverse hoisted, item )
+            if hoisted = ( @hoist name, "Variation#{ index + 1 }", item )
+              object[ key ][ index ] = hoisted.refObj
+              ( @traverse hoisted.hoistedName, item )
             else
               ( @traverse "#{ name }Variation#{ index + 1 }", item )
  

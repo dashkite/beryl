@@ -39,7 +39,6 @@
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.1.2",
-    "@dashkite/generic": "^0.9.32",
     "@dashkite/joy": "^0.3.16",
     "turndown": "^7.1.2"
   }

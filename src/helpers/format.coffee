@@ -1,19 +1,17 @@
 import { isArray } from "@dashkite/joy/type"
-import { titleCase, uncase } from "@dashkite/joy/text"
 import { pipe } from "@dashkite/joy/function"
 import {
-  toLowerCase
-  replace
+  titleCase
+  uncase
   startsWith
+  dash
+  replace
 } from "@dashkite/joy/text"
-import Generic from "@dashkite/generic"
 
 import labels from "./labels"
 
 toIdentifier = pipe [
-  toLowerCase
-  replace( /[^a-z0-9\s-]/g, "" )
-  replace( /\s+/g, "-" )
+  dash
   replace( /-+/g, "-" )
 ]
 
@@ -29,85 +27,52 @@ getRefLink = ( referenceValue, references ) ->
   referenceObject = references[ referenceValue[ 1.. ]]
   referenceSchema = referenceObject?.value
   headingName = ( getHeadingName referenceValue, referenceSchema )
-  slug = ( toIdentifier headingName )
-  "<a href=\"##{ slug }\">#{ headingName }</a>"
+  id = ( toIdentifier headingName )
+  "<a href=\"##{ id }\">#{ headingName }</a>"
 
-formatProperty = ( Generic.make "formatProperty" )
+formatString = ( name, property, references ) ->
+  if name == "type"
+    ( Format.direct property.value )
+  else if name == "pattern"
+    "<code>#{ property.value }</code>"
+  else if name == "required"
+    propertyNames = ( property.value.split ", " )
+    links = []
+    for propertyName in propertyNames
+      title = ( titleCase ( uncase propertyName ))
+      id = ( Format.identifier title )
+      ( links.push "<a href=\"##{ id }\">#{ title }</a>" )
+    ( links.join ", " )
+  else if name == "$ref" || ( startsWith "#", property.value )
+    ( Format.reference property.value, references )
+  else
+    property.value
 
-# General fallback rule for strings
-( formatProperty.define [ "string", String, Object, Object ], ( ctype, name, property, references ) ->
-  property.value
-)
-
-# Specific rules for strings (newer/more specific rules unshifted to front of list)
-isHashRef = ( property ) -> ( startsWith "#", property.value )
-( formatProperty.define [ "string", String, isHashRef, Object ], ( ctype, name, property, references ) ->
-  ( Format.reference property.value, references )
-)
-
-( formatProperty.define [ "string", "$ref", Object, Object ], ( ctype, name, property, references ) ->
-  ( Format.reference property.value, references )
-)
-
-( formatProperty.define [ "string", "required", Object, Object ], ( ctype, name, property, references ) ->
-  propertyNames = ( property.value.split ", " )
-  links = []
-  for propertyName in propertyNames
-    title = ( titleCase ( uncase propertyName ))
-    slug = ( Format.identifier title )
-    ( links.push "<a href=\"##{ slug }\">#{ title }</a>" )
-  ( links.join ", " )
-)
-
-( formatProperty.define [ "string", "pattern", Object, Object ], ( ctype, name, property, references ) ->
-  "<code>#{ property.value }</code>"
-)
-
-( formatProperty.define [ "string", "type", Object, Object ], ( ctype, name, property, references ) ->
-  ( Format.direct property.value )
-)
-
-# Number and Boolean rules
-( formatProperty.define [ "number", String, Object, Object ], ( ctype, name, property, references ) ->
+formatNumberOrBoolean = ( property ) ->
   ( String property.value )
-)
 
-( formatProperty.define [ "boolean", String, Object, Object ], ( ctype, name, property, references ) ->
-  ( String property.value )
-)
+formatObject = ( property, references ) ->
+  if property.value.$ref?
+    ( Format.reference property.value.$ref.value, references )
+  else
+    ( Format.subschema property.value, references )
 
-# General fallback rule for objects
-( formatProperty.define [ "object", String, Object, Object ], ( ctype, name, property, references ) ->
-  ( Format.subschema property.value, references )
-)
-
-# Specific rule for objects
-hasRefObj = ( property ) -> property.value.$ref?
-( formatProperty.define [ "object", String, hasRefObj, Object ], ( ctype, name, property, references ) ->
-  ( Format.reference property.value.$ref.value, references )
-)
-
-# General fallback rule for arrays
-( formatProperty.define [ "array", String, Object, Object ], ( ctype, name, property, references ) ->
-  options = []
-  for item in property.value
-    if item.Ctype == "object"
-      if item.value.$ref
-        ( options.push ( Format.reference item.value.$ref.value, references ))
+formatArray = ( name, property, references ) ->
+  if name in [ "anyOf", "allOf", "oneOf" ]
+    ( Format.combinator name, property.value, references )
+  else
+    options = []
+    for item in property.value
+      if item.Ctype == "object"
+        if item.value.$ref?
+          ( options.push ( Format.reference item.value.$ref.value, references ))
+        else
+          ( options.push ( Format.subschema item.value, references ))
+      else if item.Ctype == "string"
+        ( options.push item.value )
       else
-        ( options.push ( Format.subschema item.value, references ))
-    else if item.Ctype == "string"
-      ( options.push item.value )
-    else
-      ( options.push ( String item.value ))
-  ( options.join ", " )
-)
-
-# Specific rule for arrays
-isCombinatorName = ( name ) -> name in [ "anyOf", "allOf", "oneOf" ]
-( formatProperty.define [ "array", isCombinatorName, Object, Object ], ( ctype, name, property, references ) ->
-  ( Format.combinator name, property.value, references )
-)
+        ( options.push ( String item.value ))
+    ( options.join ", " )
 
 Format =
   identifier: toIdentifier
@@ -163,6 +128,12 @@ Format =
 
   property: ( name, property, references ) ->
     if !property? then ""
-    else ( formatProperty property.Ctype, name, property, references )
+    else
+      switch property.Ctype
+        when "string" then ( formatString name, property, references )
+        when "number", "boolean" then ( formatNumberOrBoolean property )
+        when "object" then ( formatObject property, references )
+        when "array" then ( formatArray name, property, references )
+        else ""
 
 export { Format }

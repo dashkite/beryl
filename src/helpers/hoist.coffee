@@ -18,7 +18,7 @@ check = ( object ) ->
 # Extracts a 'baseTitle' (what the subschema represents, ex: "Variation 1" or "Include Items")
 # and a 'parentTitle' (its parent property namespace) to handle conflict resolution.
 parseHoistedName = ( hoistedName ) ->
-  match = ( hoistedName.match /(.*)(Item\d+|Items|Variation\d+)$/ )
+  match = ( hoistedName.match /(.*)(Item\d+|Items|Variation\d+|Entry)$/ )
   
   if match
     prefix = match[ 1 ]
@@ -121,6 +121,13 @@ class Hoister
             ( @traverse hoisted.hoistedName, @schema.$defs[ hoisted.hoistedName ] )
           else
             ( @traverse "#{ name }Items", object.items )
+
+      if object.additionalProperties? && isObject object.additionalProperties
+        if hoisted = ( @hoist name, "Entry", object.additionalProperties )
+          object.additionalProperties = hoisted.refObj
+          ( @traverse hoisted.hoistedName, @schema.$defs[ hoisted.hoistedName ] )
+        else
+          ( @traverse "#{ name }Entry", object.additionalProperties )
  
       for key in [ "anyOf", "allOf", "oneOf" ]
         if object[ key ]? && isArray object[ key ]
@@ -140,6 +147,11 @@ class Hoister
   # parenthetical parent context (e.g., "Resolvers (Grant)") to ensure uniqueness.
   assignTitles: ->
     frequencies = {}
+    rootTitle = if @schema.title?
+      ( titleCase ( uncase @schema.title ))
+    else
+      ""
+
     for definitionName, definition of @schema.$defs
       if @definitionsToTitle[ definitionName ]?
         info = @definitionsToTitle[ definitionName ]
@@ -156,7 +168,14 @@ class Hoister
  
     for definitionName, info of @definitionsToTitle
       if frequencies[ info.baseTitle ] > 1 && info.parentTitle != ""
-        info.definition.title = "#{ info.baseTitle } (#{ info.parentTitle })"
+        cleanParent = info.parentTitle
+        if rootTitle != "" && ( cleanParent.startsWith rootTitle )
+          cleanParent = ( cleanParent[ rootTitle.length.. ].trim() )
+
+        if cleanParent != ""
+          info.definition.title = "#{ info.baseTitle } (#{ cleanParent })"
+        else
+          info.definition.title = info.baseTitle
       else
         info.definition.title = info.baseTitle
 

@@ -9,3 +9,4 @@ anyOf: Any Of
 allOf: All Of
 oneOf: One Of
 $ref: Reference
+$schema: Schema URI

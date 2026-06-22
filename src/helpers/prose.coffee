@@ -73,6 +73,8 @@ buildSection = ( key, iterable, isRoot, references ) ->
   properties = []
   if iterable.properties?
     for propertyName, property of iterable.properties.value
+      if isRoot && propertyName == "$schema"
+        continue
       ( properties.push ( buildProperty propertyName, property, false, references ))
       
   if iterable.patternProperties?

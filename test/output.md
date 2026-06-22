@@ -1,12 +1,13 @@
 Rune Description
 ================
 
-[Action](#action) | [Action Variation 1](#action-variation-1) | [Action Variation 2](#action-variation-2) | [Action Variation 3](#action-variation-3) | [Resources](#resources) | [Methods](#methods) | [Resolvers (Grant)](#resolvers-grant) | [Bindings](#bindings) | [Resolver](#resolver) | [Grant](#grant) | [Include](#include) | [Exclude](#exclude) | [Resources Items](#resources-items) | [Include Items](#include-items) | [Exclude Items](#exclude-items) | [Methods Items](#methods-items) | [Resolvers Items](#resolvers-items) | [Domain](#domain) | [Expires](#expires) | [Resolvers (Rune Description)](#resolvers-rune-description) | [Grants](#grants)
+[Action](#action) | [Action Variation 1](#action-variation-1) | [Action Variation 2](#action-variation-2) | [Action Variation 3](#action-variation-3) | [Resources](#resources) | [Methods](#methods) | [Resolvers (Grant)](#resolvers-grant) | [Bindings](#bindings) | [Resolver](#resolver) | [Grant](#grant) | [Include](#include) | [Exclude](#exclude) | [Resources Items](#resources-items) | [Include Items](#include-items) | [Exclude Items](#exclude-items) | [Methods Items](#methods-items) | [Resolvers Items](#resolvers-items) | [Domain](#domain) | [Expires](#expires) | [Resolvers](#resolvers) | [Grants](#grants)
 
 A rune description describes the authorization grants for a domain.
 
 | Name | Value |
 | --- | --- |
+| Schema URI | https://json-schema.org/draft/2020-12/schema |
 | Type | Object |
 | Required Properties | [Domain](#domain), [Expires](#expires), [Identity](#identity), [Grants](#grants) |
 | Additional Properties | false |
@@ -37,7 +38,7 @@ The identity the rune is associated with.
 
 A dictionary of resolvers.
 
-See: [Resolvers (Rune Description)](#resolvers-rune-description)
+See: [Resolvers](#resolvers)
 
 #### Grants
 
@@ -358,8 +359,8 @@ A duration object that represents when the rune expires.
 | --- | --- |
 | Type | Integer |
 
-Resolvers (Rune Description)
-----------------------------
+Resolvers
+---------
 
 A dictionary of resolvers.
 

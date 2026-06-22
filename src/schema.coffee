@@ -39,7 +39,6 @@ class Schema
       cleanKey = key[ 1.. ]
       @references[ cleanKey ] = ( resolved.get key )
     ( @decorator @references )
-    delete @schema[ "$schema" ]
     delete @schema[ "$defs" ]
 
   decorator: ( iterable ) ->

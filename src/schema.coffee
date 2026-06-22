@@ -43,7 +43,7 @@ class Schema
 
   decorator: ( iterable ) ->
     for key, value of iterable
-      if key == "$ref"
+      if key == "$ref" && ( value.startsWith "#" )
         ( @referenceKeys.push value )
       if isString value
         iterable[ key ] = { Ctype: "string", value }

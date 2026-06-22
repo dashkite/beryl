@@ -28,11 +28,15 @@ getHeadingName = ( key, referenceSchema ) ->
     ( titleCase ( uncase lastName ))
 
 getRefLink = ( referenceValue, references ) ->
-  referenceObject = references[ referenceValue[ 1.. ]]
-  referenceSchema = referenceObject?.value
-  headingName = ( getHeadingName referenceValue, referenceSchema )
-  id = ( toIdentifier headingName )
-  "<a href=\"##{ id }\">#{ headingName }</a>"
+  if !( startsWith "#", referenceValue )
+    label = if ( referenceValue.includes "json-schema.org" ) then "JSON Schema" else referenceValue
+    "<a href=\"#{ referenceValue }\">#{ label }</a>"
+  else
+    referenceObject = references[ referenceValue[ 1.. ]]
+    referenceSchema = referenceObject?.value
+    headingName = ( getHeadingName referenceValue, referenceSchema )
+    id = ( toIdentifier headingName )
+    "<a href=\"##{ id }\">#{ headingName }</a>"
 
 # Formats string-type schema properties.
 # Dispatches on the property name to produce direct type mappings, code blocks 

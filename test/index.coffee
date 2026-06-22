@@ -13,10 +13,8 @@ do ({ response } = {}) ->
   print await test "@dashkite/beryl", [
 
     await test "html", ->
-      console.log await html schema
       FS.writeFile "./test/output.html", await html schema
 
     await test "markdown", ->
-      console.log await markdown schema
       FS.writeFile "./test/output.md", await markdown schema
   ]
